@@ -36,7 +36,7 @@ particlesJS("particles", {
                     }
                 },
                 size: {
-                    value: 30,
+                    value: 20,
                     random: !0,
                     anim: {
                         enable: !1,
@@ -51,11 +51,11 @@ particlesJS("particles", {
                     color: "#cfcfcf",
                     opacity: .26,
                     number: 50,
-                    width: 6
+                    width: 3
                 },
                 move: {
                     enable: !0,
-                    speed: 2,
+                    speed: 6,
                     direction: "none",
                     random: !0,
                     straight: !1,
