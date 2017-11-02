@@ -1,17 +1,16 @@
-package com.base.config;
+package com.config;
 
-import com.login.model.TSystemUser;
+import com.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Beans {
 
-    @Bean(name="user")
-    public TSystemUser buildUser(){
-        TSystemUser user = new TSystemUser();
+    @Bean(name="user",initMethod = "myInit",destroyMethod = "myDestroy")
+    public User buildUser(){
+        User user = new User();
         user.setUsername("wangchen");
-        user.setPassword("123456");
         return user;
     }
 }
