@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	public void beanFactoryForBean() {
 
 		ClassPathResource resource = new ClassPathResource("beans.xml");
 
@@ -31,16 +31,6 @@ public class ApplicationTests {
 				new XmlBeanDefinitionReader((DefaultListableBeanFactory) factory);
 
 		reader.loadBeanDefinitions(resource);
-
-		/**
-		 * xml load bean
-		 */
-		//factory = new ClassPathXmlApplicationContext("beans.xml");
-
-		/**
-		 * java config load bean
-		 */
-		//factory = new AnnotationConfigApplicationContext(Beans.class);
 
 		((ConfigurableBeanFactory)factory).addBeanPostProcessor(
 				new MyBeanPostProcessor());

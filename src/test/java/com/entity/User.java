@@ -3,6 +3,9 @@ package com.entity;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.*;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 public class User implements BeanFactoryAware,BeanNameAware,
         InitializingBean,DisposableBean {
 
@@ -42,10 +45,20 @@ public class User implements BeanFactoryAware,BeanNameAware,
     }
 
     public void myInit() {
-        System.out.println("调用 myInit");
+        System.out.println("调用 init-method myInit");
     }
 
     public void myDestroy() {
-        System.out.println("调用 myDestroy");
+        System.out.println("调用 destory-method myDestroy");
+    }
+
+    @PostConstruct
+    public void  init(){
+        System.out.println("调用 @PostConstruct init");
+    }
+
+    @PreDestroy
+    public void  dostory(){
+        System.out.println("调用 @PreDestroy dostory");
     }
 }
