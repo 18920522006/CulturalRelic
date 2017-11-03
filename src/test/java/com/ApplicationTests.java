@@ -12,6 +12,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,6 +22,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ApplicationTests {
 
 	@Test
+	public void applicationContextForBean() {
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(User.class);
+		User user = applicationContext.getBean("user",User.class);
+		System.out.println(user.getUsername());
+	}
+
+
 	public void beanFactoryForBean() {
 
 		ClassPathResource resource = new ClassPathResource("beans.xml");
