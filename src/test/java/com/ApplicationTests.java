@@ -2,6 +2,9 @@ package com;
 
 import com.beanfactory.MyBeanPostProcessor;
 import com.beanfactory.MyInstantiationAwareBeanPostProcessor;
+import com.config.DaoConfig;
+import com.config.ServiceConfig;
+import com.entity.LoginService;
 import com.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +22,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ApplicationTests {
+
+	/**
+	 * java config 方式加载Bean
+	 */
+	public void javaConfigAnnotation() {
+		ApplicationContext applicationContext =
+				new AnnotationConfigApplicationContext(DaoConfig.class,ServiceConfig.class);
+		LoginService loginService = applicationContext.getBean("LoginService1",LoginService.class);
+		System.out.println(loginService.getLoginDao());
+	}
+
 
 	/**
 	 * 使用 FactoryBean 接口自定义实例化Bean
