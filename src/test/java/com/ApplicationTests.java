@@ -22,6 +22,7 @@ public class ApplicationTests {
 
 	/**
 	 * 使用 FactoryBean 接口自定义实例化Bean
+	 * 当 getBean(& + name)，带 & 时返回工厂本身(含User对象)
 	 */
 	public void factoruBeanforUser() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
