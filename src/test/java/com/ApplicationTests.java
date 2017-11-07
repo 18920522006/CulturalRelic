@@ -1,5 +1,6 @@
 package com;
 
+import com.beanfactory.MyBeanFactoryPostProcessor;
 import com.beanfactory.MyBeanPostProcessor;
 import com.beanfactory.MyInstantiationAwareBeanPostProcessor;
 import com.config.Beans;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionReader;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -62,15 +65,22 @@ public class ApplicationTests {
 	 * 使用xml方式实例Bean
 	 */
 	public void beanFactoryForBean() {
-		ClassPathResource resource = new ClassPathResource("beans.xml");
-		BeanFactory factory = new DefaultListableBeanFactory();
-		XmlBeanDefinitionReader reader =
-				new XmlBeanDefinitionReader((DefaultListableBeanFactory) factory);
+		/** ① ResourceLoader 装载配置文件 */
+		Resource resource = new ClassPathResource("beans.xml");
+
+		/**  BeanDefinitionRegistry 存储 BeanDefinition */
+		DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+
+		/**  BeanDefinitionReader 解析 <bean> 变成 BeanDefinition 对象 */
+		BeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
+
+		/** ② 装载 */
 		reader.loadBeanDefinitions(resource);
-		((ConfigurableBeanFactory)factory).addBeanPostProcessor(
-				new MyBeanPostProcessor());
-		((ConfigurableBeanFactory)factory).addBeanPostProcessor(
-				new MyInstantiationAwareBeanPostProcessor());
+
+		/** ③ BeanPostProcessor 对Bean进行加工 */
+		factory.addBeanPostProcessor(new MyBeanPostProcessor());
+		factory.addBeanPostProcessor(new MyInstantiationAwareBeanPostProcessor());
+
 		User user = factory.getBean("user", User.class);
 		System.out.println(user.getUsername());
 	}
