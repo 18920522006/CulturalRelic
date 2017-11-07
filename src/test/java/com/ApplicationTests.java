@@ -2,6 +2,7 @@ package com;
 
 import com.beanfactory.MyBeanPostProcessor;
 import com.beanfactory.MyInstantiationAwareBeanPostProcessor;
+import com.config.Beans;
 import com.config.DaoConfig;
 import com.config.ServiceConfig;
 import com.entity.LoginService;
@@ -33,7 +34,6 @@ public class ApplicationTests {
 		System.out.println(loginService.getLoginDao());
 	}
 
-
 	/**
 	 * 使用 FactoryBean 接口自定义实例化Bean
 	 * 当 getBean(& + name)，带 & 时返回工厂本身(含User对象)
@@ -47,10 +47,15 @@ public class ApplicationTests {
 	/**
 	 * 使用注解方式实例Bean
 	 */
+	@Test
 	public void applicationContextForBean() {
-		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(User.class);
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Beans.class);
 		User user = applicationContext.getBean("user",User.class);
 		System.out.println(user.getUsername());
+		User user2 = applicationContext.getBean("user2",User.class);
+		System.out.println(user2.getUsername());
+		User user3 = applicationContext.getBean("user3",User.class);
+		System.out.println(user3.getUsername());
 	}
 
 	/**
