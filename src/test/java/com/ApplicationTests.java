@@ -50,7 +50,6 @@ public class ApplicationTests {
 	/**
 	 * 使用注解方式实例Bean
 	 */
-	@Test
 	public void applicationContextForBean() {
 		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Beans.class);
 		User user = applicationContext.getBean("user",User.class);
@@ -85,4 +84,13 @@ public class ApplicationTests {
 		System.out.println(user.getUsername());
 	}
 
+	/**
+	 * 自定义属性编辑器
+	 */
+	public void customEditor() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		User user = applicationContext.getBean("user4", User.class);
+		String color = user.getCar().getColor();
+		System.out.println(color);
+	}
 }

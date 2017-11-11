@@ -13,6 +13,8 @@ public class User implements BeanFactoryAware,BeanNameAware,ApplicationContextAw
 
     private String username;
 
+    private Car car;
+
     public User() {
         System.out.println("初始化 user");
     }
@@ -24,6 +26,14 @@ public class User implements BeanFactoryAware,BeanNameAware,ApplicationContextAw
 
     public String getUsername() {
         return username;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 
     @Override

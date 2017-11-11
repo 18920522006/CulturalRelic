@@ -11,4 +11,17 @@
         <property name="username" value="wangchen"></property>
     </bean>
 
+    <bean id="user4" class="com.entity.User">
+        <property name="username" value="wangchen"></property>
+        <property name="car" value="red,10000"></property>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="com.entity.Car" value="com.editor.CarEditor"></entry>
+            </map>
+        </property>
+    </bean>
+
 </beans>
