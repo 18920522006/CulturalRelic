@@ -8,6 +8,7 @@ import com.config.DaoConfig;
 import com.config.ServiceConfig;
 import com.entity.LoginService;
 import com.entity.User;
+import com.event.MailSendMulticaster;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,6 +23,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Objects;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -92,5 +95,14 @@ public class ApplicationTests {
 		User user = applicationContext.getBean("user4", User.class);
 		String color = user.getCar().getColor();
 		System.out.println(color);
+	}
+
+	/**
+	 * 容器事件
+	 */
+	public  void sendMail() {
+		ApplicationContext applicationContext = new AnnotationConfigApplicationContext(Beans.class);
+		MailSendMulticaster mailSender = applicationContext.getBean("mailSender", MailSendMulticaster.class);
+		mailSender.sendMail("aaa@bbb.com");
 	}
 }
