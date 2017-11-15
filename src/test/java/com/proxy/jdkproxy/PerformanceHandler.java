@@ -1,4 +1,6 @@
-package com.proxy;
+package com.proxy.jdkproxy;
+
+import com.proxy.performance.PerformanceMonitor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

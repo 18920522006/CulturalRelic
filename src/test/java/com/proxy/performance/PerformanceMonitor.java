@@ -1,4 +1,6 @@
-package com.proxy;
+package com.proxy.performance;
+
+import com.proxy.performance.MethodPerformance;
 
 public class PerformanceMonitor {
 

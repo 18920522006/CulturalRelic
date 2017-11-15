@@ -1,4 +1,4 @@
-package com.proxy;
+package com.proxy.service;
 
 public interface ForumService {
     void removeTopic(int topicId);

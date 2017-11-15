@@ -1,5 +1,9 @@
 package com.proxy;
 
+import com.proxy.cglibproxy.CglibProxy;
+import com.proxy.jdkproxy.PerformanceHandler;
+import com.proxy.service.ForumService;
+import com.proxy.service.ForumServiceImpl;
 import org.junit.Test;
 
 import java.lang.reflect.Proxy;
@@ -30,6 +34,7 @@ public class TestForumService {
     /**
      *  cglib 动态代理
      */
+    @Test
     public void proxy_() {
         CglibProxy proxy = new CglibProxy();
         ForumServiceImpl forumService =

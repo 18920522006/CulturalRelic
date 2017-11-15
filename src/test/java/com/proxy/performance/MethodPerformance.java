@@ -1,4 +1,4 @@
-package com.proxy;
+package com.proxy.performance;
 
 public class MethodPerformance {
     private long begin;
