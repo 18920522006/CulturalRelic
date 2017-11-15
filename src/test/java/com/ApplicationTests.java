@@ -1,5 +1,6 @@
 package com;
 
+import com.advice.Waiter;
 import com.beanfactory.MyBeanFactoryPostProcessor;
 import com.beanfactory.MyBeanPostProcessor;
 import com.beanfactory.MyInstantiationAwareBeanPostProcessor;
@@ -105,4 +106,15 @@ public class ApplicationTests {
 		MailSendMulticaster mailSender = applicationContext.getBean("mailSender", MailSendMulticaster.class);
 		mailSender.sendMail("aaa@bbb.com");
 	}
+
+	/**
+	 * 容器取代理类
+	 */
+	@Test
+	public  void getProxy() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		Waiter waiter = applicationContext.getBean("waiter", Waiter.class);
+		waiter.greetTo("zhangsan");
+	}
+
 }
