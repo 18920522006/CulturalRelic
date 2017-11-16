@@ -10,6 +10,10 @@ import com.config.ServiceConfig;
 import com.entity.LoginService;
 import com.entity.User;
 import com.event.MailSendMulticaster;
+import com.introduce.Monitorable;
+import com.introduce.Say;
+import com.proxy.service.ForumService;
+import com.proxy.service.ForumServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.BeanFactory;
@@ -110,11 +114,30 @@ public class ApplicationTests {
 	/**
 	 * 容器取代理类
 	 */
-	@Test
-	public  void getProxy() {
+	public void getProxy() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
 		Waiter waiter = applicationContext.getBean("waiter", Waiter.class);
 		waiter.greetTo("zhangsan");
+	}
+
+	/**
+	 * 引介增加增强,添加setMonitorActive方法
+	 */
+	@Test
+	public void introduce() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		ForumService service = applicationContext.getBean("forumServiceProxy", ForumService.class);
+		service.removeForum(10);
+		service.removeTopic(1012);
+
+		Monitorable monitorable = (Monitorable) service;
+		monitorable.setMonitorActive(true);
+
+		Say say = (Say) service;
+		say.say();
+
+		service.removeForum(10);
+		service.removeTopic(1012);
 	}
 
 }
