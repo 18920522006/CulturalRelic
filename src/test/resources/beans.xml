@@ -59,5 +59,31 @@
     </bean>
 
 
+    <!-- target -->
+    <bean id="waiterTarget" class="com.advisor.Waiter"/>
+    <bean id="sellerTarget" class="com.advisor.Seller"/>
+
+    <!-- advice -->
+    <bean id="greetingAdvice" class="com.advisor.GreetingBeforeAdvice"/>
+
+    <!-- advisor -->
+    <bean id="greetingAdvisor" class="com.advisor.GreetingAdvisor">
+        <property name="advice" ref="greetingAdvice"></property>
+    </bean>
+
+    <!-- parent template -->
+    <bean id="parent" abstract="true" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="interceptorNames" value="greetingAdvisor"></property>
+        <property name="proxyTargetClass" value="true"></property>
+    </bean>
+
+    <bean id="waiterAdvisor" parent="parent">
+        <property name="target" ref="waiterTarget"></property>
+    </bean>
+
+    <bean id="sellerAdvisor" parent="parent">
+        <property name="target" ref="sellerTarget"></property>
+    </bean>
+
 
 </beans>

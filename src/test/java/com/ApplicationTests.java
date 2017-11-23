@@ -1,6 +1,7 @@
 package com;
 
 import com.advice.Waiter;
+import com.advisor.Seller;
 import com.beanfactory.MyBeanFactoryPostProcessor;
 import com.beanfactory.MyBeanPostProcessor;
 import com.beanfactory.MyInstantiationAwareBeanPostProcessor;
@@ -123,7 +124,6 @@ public class ApplicationTests {
 	/**
 	 * 引介增加增强,添加setMonitorActive方法
 	 */
-	@Test
 	public void introduce() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
 		ForumService service = applicationContext.getBean("forumServiceProxy", ForumService.class);
@@ -138,6 +138,18 @@ public class ApplicationTests {
 
 		service.removeForum(10);
 		service.removeTopic(1012);
+	}
+
+	/**
+	 *  静态普通方法匹配切面
+	 */
+	public void staticMethodMatcherPointcutAdvisor() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		com.advisor.Waiter advisor = applicationContext.getBean("waiterAdvisor", com.advisor.Waiter.class);
+		Seller seller = applicationContext.getBean("sellerAdvisor", Seller.class);
+		advisor.greetTo("张三");
+		seller.greetTo("李四");
+		System.out.println();
 	}
 
 }
