@@ -152,4 +152,13 @@ public class ApplicationTests {
 		System.out.println();
 	}
 
+	/**
+	 *  静态正则表达式方法匹配切面
+	 */
+	public void staticRegexpMethodMatcherPointcutAdvisor() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		com.advisor.Waiter advisor = applicationContext.getBean("waiterRegex", com.advisor.Waiter.class);
+		advisor.greetTo("王五");
+	}
+
 }
