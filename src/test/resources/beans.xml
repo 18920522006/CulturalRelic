@@ -100,5 +100,18 @@
         <property name="proxyTargetClass" value="true"></property>
     </bean>
 
+    <!-- 动态切面 -->
+    <bean id="dynamicAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="greetingAdvice"></property>
+        <property name="pointcut">
+            <bean class="com.advisor.GreetingDynamicPointcut"></bean>
+        </property>
+    </bean>
+
+    <bean id="waiterDynamic" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="interceptorNames" value="dynamicAdvisor"></property>
+        <property name="target" ref="waiterTarget"></property>
+        <property name="proxyTargetClass" value="true"></property>
+    </bean>
 
 </beans>
