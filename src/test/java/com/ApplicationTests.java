@@ -161,4 +161,14 @@ public class ApplicationTests {
 		advisor.greetTo("王五");
 	}
 
+	/**
+	 *  动态切面
+	 */
+	@Test
+	public void dynamicAdvisor() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		com.advisor.Waiter advisor = applicationContext.getBean("waiterDynamic", com.advisor.Waiter.class);
+		advisor.greetTo("张三");
+		advisor.greetTo("王五");
+	}
 }
