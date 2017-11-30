@@ -13,7 +13,7 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         BeanDefinition user = beanFactory.getBeanDefinition("user");
         user.getPropertyValues().addPropertyValue("username","zhangsan");
-        System.out.println("调用 BeanFactoryPostProcessor.postProcessBeanFactory");
+        System.out.println(this.getClass().getName()+"."+Thread.currentThread().getStackTrace()[1].getMethodName());
 
         /**
          * 动态注册BeanDefinition

@@ -11,7 +11,7 @@ public class MyInstantiationAwareBeanPostProcessor extends InstantiationAwareBea
     @Override
     public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
         if ("user".equals(beanName)) {
-            System.out.println("实例化Bean之前调用");
+            System.out.println(this.getClass().getName()+"."+Thread.currentThread().getStackTrace()[1].getMethodName());
         }
         return super.postProcessBeforeInstantiation(beanClass, beanName);
     }
@@ -19,7 +19,7 @@ public class MyInstantiationAwareBeanPostProcessor extends InstantiationAwareBea
     @Override
     public boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException {
         if("user".equals(beanName)){
-            System.out.println("实例化Bean之后调用");
+            System.out.println(this.getClass().getName()+"."+Thread.currentThread().getStackTrace()[1].getMethodName());
         }
         return super.postProcessAfterInstantiation(bean, beanName);
     }
@@ -27,7 +27,7 @@ public class MyInstantiationAwareBeanPostProcessor extends InstantiationAwareBea
     @Override
     public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName) throws BeansException {
         if ("user".equals(beanName)) {
-            System.out.println("设置对象属性");
+            System.out.println(this.getClass().getName()+"."+Thread.currentThread().getStackTrace()[1].getMethodName());
         }
         return super.postProcessPropertyValues(pvs, pds, bean, beanName);
     }
