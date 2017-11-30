@@ -148,4 +148,16 @@
         p:target-ref="waiterTarget"
         p:proxyTargetClass="true"/>
 
+    <!-- 引介切面 -->
+    <bean id="introduceAdvisor" class="org.springframework.aop.support.DefaultIntroductionAdvisor">
+        <constructor-arg ref="pmonitor"></constructor-arg>
+    </bean>
+
+    <bean id="forumServiceImpl" class="com.proxy.service.ForumServiceImpl"/>
+
+    <bean id="forumServiceAdvisor" class="org.springframework.aop.framework.ProxyFactoryBean"
+          p:interceptorNames="introduceAdvisor"
+          p:target-ref="forumServiceImpl"
+          p:proxyTargetClass="true"/>
+
 </beans>

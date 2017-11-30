@@ -191,12 +191,30 @@ public class ApplicationTests {
 	 *  	- 流程切面
 	 *   	- 静态名称切面
 	 */
-	@Test
 	public void composableAdvisor() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
 		com.advisor.Waiter waiter = applicationContext.getBean("waiterComposable", com.advisor.Waiter.class);
 		WaiterDelegate waiterDelegate = new WaiterDelegate();
 		waiterDelegate.setWaiter(waiter);
 		waiterDelegate.service("张三");
+	}
+
+	/**
+	 *  引介切面
+	 */
+	public void forumServiceAdvisor() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		ForumService service = applicationContext.getBean("forumServiceAdvisor", ForumService.class);
+		service.removeForum(10);
+		service.removeTopic(1012);
+
+		Monitorable monitorable = (Monitorable) service;
+		monitorable.setMonitorActive(true);
+
+		Say say = (Say) service;
+		say.say();
+
+		service.removeForum(10);
+		service.removeTopic(1012);
 	}
 }
