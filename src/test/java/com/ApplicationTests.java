@@ -2,6 +2,7 @@ package com;
 
 import com.advice.Waiter;
 import com.advisor.Seller;
+import com.advisor.WaiterDelegate;
 import com.beanfactory.MyBeanFactoryPostProcessor;
 import com.beanfactory.MyBeanPostProcessor;
 import com.beanfactory.MyInstantiationAwareBeanPostProcessor;
@@ -155,6 +156,7 @@ public class ApplicationTests {
 	/**
 	 *  静态正则表达式方法匹配切面
 	 */
+	@Test
 	public void staticRegexpMethodMatcherPointcutAdvisor() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
 		com.advisor.Waiter advisor = applicationContext.getBean("waiterRegex", com.advisor.Waiter.class);
@@ -164,11 +166,24 @@ public class ApplicationTests {
 	/**
 	 *  动态切面
 	 */
-	@Test
 	public void dynamicAdvisor() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
 		com.advisor.Waiter advisor = applicationContext.getBean("waiterDynamic", com.advisor.Waiter.class);
 		advisor.greetTo("张三");
 		advisor.greetTo("王五");
+	}
+
+	/**
+	 *  流程切面
+	 */
+	@Test
+	public void controlFlowAdvisor() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		com.advisor.Waiter waiter = applicationContext.getBean("waiterControlFlow", com.advisor.Waiter.class);
+		WaiterDelegate waiterDelegate = new WaiterDelegate();
+		waiterDelegate.setWaiter(waiter);
+		waiter.serveTo("张三");
+		waiter.greetTo("张三");
+		waiterDelegate.service("张三");
 	}
 }

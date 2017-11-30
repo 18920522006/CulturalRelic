@@ -114,4 +114,25 @@
         <property name="proxyTargetClass" value="true"></property>
     </bean>
 
+    <!-- 流程切点 -->
+    <bean id="controlFlowPointcut" class="org.springframework.aop.support.ControlFlowPointcut">
+        <!-- 流程切点、类 -->
+        <constructor-arg type="java.lang.Class" value="com.advisor.WaiterDelegate"></constructor-arg>
+        <!-- 流程切点、方法 -->
+        <constructor-arg type="java.lang.String" value="service"></constructor-arg>
+    </bean>
+
+    <!-- 流程切面 -->
+    <bean id="controlFlowAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="greetingAdvice"></property>
+        <property name="pointcut" ref="controlFlowPointcut"></property>
+    </bean>
+
+    <bean id="waiterControlFlow" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="interceptorNames" value="controlFlowAdvisor"></property>
+        <property name="target" ref="waiterTarget"></property>
+        <property name="proxyTargetClass" value="true"></property>
+    </bean>
+
+
 </beans>
