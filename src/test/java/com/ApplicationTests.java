@@ -185,4 +185,18 @@ public class ApplicationTests {
 		waiter.greetTo("张三");
 		waiterDelegate.service("张三");
 	}
+
+	/**
+	 *  复合切面
+	 *  	- 流程切面
+	 *   	- 静态名称切面
+	 */
+	@Test
+	public void composableAdvisor() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		com.advisor.Waiter waiter = applicationContext.getBean("waiterComposable", com.advisor.Waiter.class);
+		WaiterDelegate waiterDelegate = new WaiterDelegate();
+		waiterDelegate.setWaiter(waiter);
+		waiterDelegate.service("张三");
+	}
 }

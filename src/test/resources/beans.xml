@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="user" class="com.entity.User" init-method="myInit" destroy-method="myDestroy">
@@ -134,5 +135,17 @@
         <property name="proxyTargetClass" value="true"></property>
     </bean>
 
+    <!-- 复合切面 -->
+    <bean id="composableAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="greetingAdvice"></property>
+        <property name="pointcut" value="#{gcp.intersectionPointcut}"></property>
+    </bean>
+
+    <bean id="gcp" class="com.advisor.GreetingComposablePointcut"></bean>
+
+    <bean id="waiterComposable" class="org.springframework.aop.framework.ProxyFactoryBean"
+        p:interceptorNames="composableAdvisor"
+        p:target-ref="waiterTarget"
+        p:proxyTargetClass="true"/>
 
 </beans>
