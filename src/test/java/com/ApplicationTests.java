@@ -176,7 +176,6 @@ public class ApplicationTests {
 	/**
 	 *  流程切面
 	 */
-	@Test
 	public void controlFlowAdvisor() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
 		com.advisor.Waiter waiter = applicationContext.getBean("waiterControlFlow", com.advisor.Waiter.class);
