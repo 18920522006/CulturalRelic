@@ -160,4 +160,14 @@
           p:target-ref="forumServiceImpl"
           p:proxyTargetClass="true"/>
 
+    <!-- target -->
+    <bean id="waiterTargetCreator" class="com.advisor.Waiter"/>
+    <bean id="sellerTargetCreator" class="com.advisor.Seller"/>
+
+    <!-- BeanNameAutoProxyCreator -->
+    <bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator"
+          p:beanNames="*erTargetCreator"
+          p:interceptorNames="greetingAdvice"
+          p:proxyTargetClass="true"/>
+
 </beans>

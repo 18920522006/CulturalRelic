@@ -217,4 +217,17 @@ public class ApplicationTests {
 		service.removeForum(10);
 		service.removeTopic(1012);
 	}
+
+	/**
+	 *  根据名称自动创建代理、只添加了增强没有切点
+	 *  代理 ProxyFactoryBean
+	 */
+	@Test
+	public void BeanNameAutoProxyCreator() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		com.advisor.Waiter waiter = applicationContext.getBean("waiterTargetCreator", com.advisor.Waiter.class);
+		com.advisor.Seller seller = applicationContext.getBean("sellerTargetCreator", com.advisor.Seller.class);
+		waiter.greetTo("张三");
+		seller.greetTo("李四");
+	}
 }
