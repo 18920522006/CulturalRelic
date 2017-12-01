@@ -186,4 +186,9 @@
         </property>
     </bean>
 
+    <!-- 装配器 -->
+    <bean class="com.aop.BeanSelfProxyAwareMounter"/>
+    <!-- 装配器管理 -->
+    <bean class="com.aop.SystemBootManager"/>
+
 </beans>
