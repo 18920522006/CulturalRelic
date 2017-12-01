@@ -170,4 +170,11 @@
           p:interceptorNames="greetingAdvice"
           p:proxyTargetClass="true"/>
 
+    <!-- target -->
+    <bean id="waiterTargetAdvisor" class="com.advisor.Waiter"/>
+    <bean id="sellerTargetAdvisor" class="com.advisor.Seller"/>
+
+    <!-- DefaultAdvisorAutoProxyCreator -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"></bean>
+
 </beans>

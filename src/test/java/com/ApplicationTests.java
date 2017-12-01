@@ -222,12 +222,23 @@ public class ApplicationTests {
 	 *  根据名称自动创建代理、只添加了增强没有切点
 	 *  代理 ProxyFactoryBean
 	 */
-	@Test
-	public void BeanNameAutoProxyCreator() {
+	public void beanNameAutoProxyCreator() {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
 		com.advisor.Waiter waiter = applicationContext.getBean("waiterTargetCreator", com.advisor.Waiter.class);
 		com.advisor.Seller seller = applicationContext.getBean("sellerTargetCreator", com.advisor.Seller.class);
 		waiter.greetTo("张三");
 		seller.greetTo("李四");
+	}
+
+	/**
+	 *  自动匹配切面,织入代理类
+	 */
+	@Test
+	public void defaultAdvisorAutoProxyCreator() {
+		ApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+		com.advisor.Waiter waiter = applicationContext.getBean("waiterTargetAdvisor", com.advisor.Waiter.class);
+		com.advisor.Seller seller = applicationContext.getBean("sellerTargetAdvisor", com.advisor.Seller.class);
+		waiter.greetTo("赵六");
+		seller.greetTo("朱七");
 	}
 }
