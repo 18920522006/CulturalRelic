@@ -175,6 +175,15 @@
     <bean id="sellerTargetAdvisor" class="com.advisor.Seller"/>
 
     <!-- DefaultAdvisorAutoProxyCreator -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"></bean>
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" p:proxyTargetClass="true"/>
+
+    <bean class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="advice" ref="greetingAdvice"></property>
+        <property name="patterns">
+            <list>
+                <value>.*To.*</value>
+            </list>
+        </property>
+    </bean>
 
 </beans>
