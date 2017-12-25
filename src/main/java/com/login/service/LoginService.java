@@ -1,6 +1,7 @@
 package com.login.service;
 
 import com.login.mapper.TSystemUserMapper;
+import com.login.model.TSystemUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +15,8 @@ public class LoginService {
         this.userMapper = userMapper;
     }
 
-    public String login(){
-        return userMapper.selectAll().get(0).getLoginname();
+    public TSystemUser login(){
+        return userMapper.selectAll().get(0);
     }
 
 }

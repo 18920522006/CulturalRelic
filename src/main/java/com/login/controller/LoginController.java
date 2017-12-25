@@ -1,5 +1,6 @@
 package com.login.controller;
 
+import com.login.model.TSystemUser;
 import com.login.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +21,15 @@ public class LoginController {
 
     @RequestMapping("/login")
     public ModelAndView login() {
-        ModelAndView view = new ModelAndView("/login/login");
-        return view.addObject("title",service.login());
+        return new ModelAndView("/index");
+    }
+
+    @RequestMapping("/main")
+    public ModelAndView test() {
+        ModelAndView modelAndView = new ModelAndView("/main/main");
+        TSystemUser user = service.login();
+        modelAndView.addObject("user", user);
+        return modelAndView;
     }
 
 }

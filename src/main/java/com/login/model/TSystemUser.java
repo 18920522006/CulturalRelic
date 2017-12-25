@@ -1,49 +1,41 @@
 package com.login.model;
 
-import java.math.BigDecimal;
 import javax.persistence.*;
 
-@Table(name = "T_SYSTEM_USER")
+@Table(name = "t_system_user")
 public class TSystemUser {
     @Id
-    @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigDecimal id;
+    private Integer id;
 
-    @Column(name = "LOGINNAME")
     private String loginname;
 
-    @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "STATE")
     private String state;
 
-    @Column(name = "USERNAME")
     private String username;
 
-    @Column(name = "ORDERNO")
     private String orderno;
 
-    @Column(name = "IFLEADER")
-    private BigDecimal ifleader;
+    private Integer ifleader;
 
     /**
-     * @return ID
+     * @return id
      */
-    public BigDecimal getId() {
+    public Integer getId() {
         return id;
     }
 
     /**
      * @param id
      */
-    public void setId(BigDecimal id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     /**
-     * @return LOGINNAME
+     * @return loginname
      */
     public String getLoginname() {
         return loginname;
@@ -57,7 +49,7 @@ public class TSystemUser {
     }
 
     /**
-     * @return PASSWORD
+     * @return password
      */
     public String getPassword() {
         return password;
@@ -71,7 +63,7 @@ public class TSystemUser {
     }
 
     /**
-     * @return STATE
+     * @return state
      */
     public String getState() {
         return state;
@@ -85,7 +77,7 @@ public class TSystemUser {
     }
 
     /**
-     * @return USERNAME
+     * @return username
      */
     public String getUsername() {
         return username;
@@ -99,7 +91,7 @@ public class TSystemUser {
     }
 
     /**
-     * @return ORDERNO
+     * @return orderno
      */
     public String getOrderno() {
         return orderno;
@@ -113,16 +105,16 @@ public class TSystemUser {
     }
 
     /**
-     * @return IFLEADER
+     * @return ifleader
      */
-    public BigDecimal getIfleader() {
+    public Integer getIfleader() {
         return ifleader;
     }
 
     /**
      * @param ifleader
      */
-    public void setIfleader(BigDecimal ifleader) {
+    public void setIfleader(Integer ifleader) {
         this.ifleader = ifleader;
     }
 }
