@@ -6,21 +6,11 @@ package com.base.convert;
  */
 public class PageInfo<T> extends com.github.pagehelper.PageInfo<T> {
 
-    private String _dc;
-
     private int page;
 
     private int start;
 
     private int limit;
-
-    public String get_dc() {
-        return _dc;
-    }
-
-    public void set_dc(String _dc) {
-        this._dc = _dc;
-    }
 
     public int getPage() {
         return page;
