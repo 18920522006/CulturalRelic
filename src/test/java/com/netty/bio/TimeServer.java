@@ -26,12 +26,24 @@ public class TimeServer {
              * Socket 负责发起连接操作
              */
             Socket socket = null;
+
+            /**
+             * 创建线程池
+             */
+            TimeServerHandlerExecutePool singleExecutor = new TimeServerHandlerExecutePool(50, 10000);
+
             while (true) {
                 /**
                  * 随机挑选一个请求，如果没有阻塞
                  */
                 socket = serverSocket.accept();
-                new Thread(new TimeServerHandler(socket)).start();
+
+                //new Thread(new TimeServerHandler(socket)).start();
+
+                /**
+                 * 使用线程池里代替单个线程的创建和销毁
+                 */
+                singleExecutor.execute(new TimeServerHandler(socket));
             }
         } catch (IOException e) {
             e.printStackTrace();
