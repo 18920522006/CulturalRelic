@@ -34,13 +34,13 @@ public class TimeClient {
 
             /**
              * 服务器返回的结果
+             * 阻塞
              */
             String resp = in.readLine();
 
             System.out.println("现在时间为 ：" + resp);
-            } catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
