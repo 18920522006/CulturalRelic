@@ -20,6 +20,8 @@ public class TestUserInfo {
         os.close();
 
         byte[] b = bos.toByteArray();
+        bos.close();
+
         System.out.println("jdk 序列化对象大小为：" + b.length);
         System.out.println("--------------------------------------------");
         System.out.println("二级制编码大小为：" + userInfo.codeC().length);
