@@ -60,7 +60,15 @@ public class TimeServer {
     private class childChannelHandler extends ChannelInitializer<SocketChannel> {
         @Override
         protected void initChannel(SocketChannel socketChannel) throws Exception {
+            /**
+             *  LineBasedFrameDecoder 遍历接收到的 ByteBuf中字节， 若果有换行，以此结束。
+             *  如果没有继续查找，单行匹配的最大长度为 1024.
+             *  如果扔没有匹配到，抛出异常，同事忽略之前的异常码流。
+             */
             socketChannel.pipeline().addLast(new LineBasedFrameDecoder(1024));
+            /**
+             *  StringDecoder 把接收到的对象，转换成字符串。继续向下传播。
+             */
             socketChannel.pipeline().addLast(new StringDecoder());
             socketChannel.pipeline().addLast(new TimeServerHandler());
         }
