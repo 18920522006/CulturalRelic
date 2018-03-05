@@ -1,5 +1,7 @@
 package com.netty.serializatble;
 
+import org.msgpack.MessagePack;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -46,5 +48,18 @@ public class PerformTestUserInfo {
         endTime = System.currentTimeMillis();
 
         System.out.println("二级制编码 100万次 时间为：" + (endTime - startTime) + " ms");
+
+        System.out.println("--------------------------------------------");
+
+        MessagePack msgpack = new MessagePack();
+
+        startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < loop; i++) {
+            byte[] bytes = msgpack.write(userInfo);
+        }
+        endTime = System.currentTimeMillis();
+
+        System.out.println("MessagePack 100万次 时间为：" + (endTime - startTime) + " ms");
     }
 }
