@@ -1,5 +1,7 @@
 package com.netty.serializatble;
 
+import org.msgpack.annotation.Message;
+
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
@@ -7,6 +9,7 @@ import java.nio.ByteBuffer;
  * @author wangchen
  * @date 2018/3/2 13:58
  */
+@Message
 public class UserInfo implements Serializable {
     /**
      * 序列号
