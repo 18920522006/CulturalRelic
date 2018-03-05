@@ -1,6 +1,4 @@
-package com.netty.Serializatble;
-
-import io.netty.buffer.ByteBuf;
+package com.netty.serializatble;
 
 import java.io.Serializable;
 import java.nio.ByteBuffer;

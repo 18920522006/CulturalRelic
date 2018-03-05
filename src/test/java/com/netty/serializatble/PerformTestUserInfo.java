@@ -1,4 +1,4 @@
-package com.netty.Serializatble;
+package com.netty.serializatble;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
