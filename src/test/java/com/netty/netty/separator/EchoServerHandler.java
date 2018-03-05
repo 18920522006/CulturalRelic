@@ -1,8 +1,17 @@
 package com.netty.netty.separator;
 
+import com.netty.serializatble.UserInfo;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import org.msgpack.MessagePack;
+import org.msgpack.template.Templates;
+import org.msgpack.type.ArrayValue;
+import org.msgpack.type.MapValue;
+import org.msgpack.type.Value;
+import org.msgpack.type.ValueType;
+
+import java.util.List;
 
 /**
  * @author wangchen
@@ -10,16 +19,11 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class EchoServerHandler extends ChannelHandlerAdapter {
 
-    private int count;
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        String body = (String) msg;
-        System.out.println("接收到的信息 ：" + body + " 计数 ：" + ++count);
-
-        //给客户端设置解码标记
-        body += "$_";
-        ctx.writeAndFlush(Unpooled.copiedBuffer(body.getBytes()));
+        MessagePack msgPack = new MessagePack();
+        UserInfo info = msgPack.convert((Value)msg, UserInfo.class);
+        System.out.println("接收到的信息 UserName ：" + info.getUserName() + " UserID : " + info.getUserID());        ctx.writeAndFlush(msg);
     }
 
     @Override

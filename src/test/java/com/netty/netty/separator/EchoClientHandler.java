@@ -1,8 +1,11 @@
 package com.netty.netty.separator;
 
+import com.netty.serializatble.UserInfo;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import org.msgpack.MessagePack;
+import org.msgpack.type.Value;
 
 /**
  * @author wangchen
@@ -10,20 +13,34 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class EchoClientHandler extends ChannelHandlerAdapter {
 
-    private int count;
+    private final int sendNumber = 100;
 
-    static final String ECHO_REQ = "WQNMGB" + "$_";
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        for (int i = 0; i < 100; i++) {
-            ctx.writeAndFlush(Unpooled.copiedBuffer(ECHO_REQ.getBytes()));
+        UserInfo[] userInfos = UserInfo();
+        for (UserInfo info : userInfos) {
+            ctx.write(info);
         }
+        ctx.flush();
+    }
+
+    private UserInfo[] UserInfo(){
+        UserInfo[] userInfos = new UserInfo[sendNumber];
+        for (int i = 0; i < sendNumber; i++ ){
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUserID(i);
+            userInfo.setUserName("ABCDEFG --->" + i);
+            userInfos[i] = userInfo;
+        }
+        return userInfos;
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("接收到的信息 ：" + msg +" 计数 ： " + ++count);
+        MessagePack msgPack = new MessagePack();
+        UserInfo info = msgPack.convert((Value)msg, UserInfo.class);
+        System.out.println("接收到的信息 UserName ：" + info.getUserName() + " UserID : " + info.getUserID());
     }
 
     @Override

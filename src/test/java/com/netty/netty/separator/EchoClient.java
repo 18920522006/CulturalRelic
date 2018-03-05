@@ -1,7 +1,8 @@
 package com.netty.netty.separator;
 
+import com.netty.serializatble.msgpack.MsgpackDecoder;
+import com.netty.serializatble.msgpack.MsgpackEncoder;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -9,8 +10,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
 
 /**
  * @author wangchen
@@ -37,8 +38,12 @@ public class EchoClient {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline()
-                                    .addLast(new DelimiterBasedFrameDecoder(1024, Unpooled.copiedBuffer("$_".getBytes())))
-                                    .addLast(new StringDecoder())
+                                    //.addLast(new DelimiterBasedFrameDecoder(1024, Unpooled.copiedBuffer("$_".getBytes())))
+                                    //.addLast(new StringDecoder())
+                                    .addLast("frameDecode", new LengthFieldBasedFrameDecoder(65535, 0, 2, 0, 2))
+                                    .addLast("msgpack decoder", new MsgpackDecoder())
+                                    .addLast("frameEncoder", new LengthFieldPrepender(2))
+                                    .addLast("msgpack encoder", new MsgpackEncoder())
                                     .addLast(new EchoClientHandler());
                         }
                     });
