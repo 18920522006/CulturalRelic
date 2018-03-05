@@ -1,4 +1,4 @@
-package com.netty.serializatble.messagepack;
+package com.netty.serializatble.msgpack;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

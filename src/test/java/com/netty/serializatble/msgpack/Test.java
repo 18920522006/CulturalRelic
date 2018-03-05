@@ -1,4 +1,4 @@
-package com.netty.serializatble.messagepack;
+package com.netty.serializatble.msgpack;
 
 import org.msgpack.MessagePack;
 import org.msgpack.template.Templates;

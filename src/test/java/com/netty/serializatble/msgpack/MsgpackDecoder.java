@@ -1,10 +1,9 @@
-package com.netty.serializatble.messagepack;
+package com.netty.serializatble.msgpack;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import org.msgpack.MessagePack;
-import org.msgpack.type.Value;
 
 import java.util.List;
 
