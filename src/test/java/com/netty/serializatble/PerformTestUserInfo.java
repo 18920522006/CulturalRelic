@@ -61,5 +61,22 @@ public class PerformTestUserInfo {
         endTime = System.currentTimeMillis();
 
         System.out.println("MessagePack 100万次 时间为：" + (endTime - startTime) + " ms");
+
+        System.out.println("--------------------------------------------");
+
+        startTime = System.currentTimeMillis();
+
+        UserInfoReqProto.UserInfoReq.Builder builder = UserInfoReqProto.UserInfoReq.newBuilder();
+        builder.setUserID(100);
+        builder.setUserName("Welcome to Netty");
+
+        UserInfoReqProto.UserInfoReq infoReq = builder.build();
+
+        for (int i = 0; i < loop; i++) {
+            byte[] byteArray = infoReq.toByteArray();
+        }
+        endTime = System.currentTimeMillis();
+
+        System.out.println("Protobuf 100万次 时间为：" + (endTime - startTime) + " ms");
     }
 }
