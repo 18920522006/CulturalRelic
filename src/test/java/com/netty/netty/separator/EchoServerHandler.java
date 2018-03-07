@@ -21,6 +21,10 @@ public class EchoServerHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        /**
+         * 由于 messagePack.read(bytes) 没有指定解码类型
+         * 接受时需要指定类型，进行转化
+         */
         MessagePack msgPack = new MessagePack();
         UserInfo info = msgPack.convert((Value)msg, UserInfo.class);
         System.out.println("接收到的信息 UserName ：" + info.getUserName() + " UserID : " + info.getUserID());        ctx.writeAndFlush(msg);
