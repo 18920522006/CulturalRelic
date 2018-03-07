@@ -2,6 +2,7 @@ package com.netty.netty.separator;
 
 import com.netty.serializatble.msgpack.MsgpackDecoder;
 import com.netty.serializatble.msgpack.MsgpackEncoder;
+import com.netty.serializatble.protobuf.SubscribeReqProto;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -12,6 +13,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
@@ -50,12 +54,26 @@ public class EchoServer {
                                      * 定长分隔符
                                      */
                                     //.addLast(new FixedLengthFrameDecoder(20))
+                                    /**
+                                     * 自动转为字符串
+                                     */
                                     //.addLast(new StringDecoder())
-                                    .addLast("frameDecode", new LengthFieldBasedFrameDecoder(65535, 0, 2, 0, 2))
-                                    .addLast("msgpack decoder", new MsgpackDecoder())
-                                    .addLast("frameEncoder", new LengthFieldPrepender(2))
-                                    .addLast("msgpack encoder", new MsgpackEncoder())
-                                    .addLast(new EchoServerHandler());
+                                    /**
+                                     * 半包处理器
+                                     * protobuf 方式
+                                     */
+                                     //.addLast(new ProtobufVarint32FrameDecoder())
+                                     //.addLast(new ProtobufDecoder(SubscribeReqProto.SubscribeReq.getDefaultInstance()))
+                                     //.addLast(new ProtobufEncoder())
+
+                                     .addLast("frameDecode", new LengthFieldBasedFrameDecoder(65535, 0, 2, 0, 2))
+                                     .addLast("frameEncoder", new LengthFieldPrepender(2))
+                                     .addLast("msgpack decoder", new MsgpackDecoder())
+                                     .addLast("msgpack encoder", new MsgpackEncoder())
+                                    /*
+                                     * 处理类
+                                     */
+                                     .addLast(new EchoServerHandler());
                         }
                     });
 
