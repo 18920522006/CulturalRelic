@@ -1,4 +1,4 @@
-package com.netty.http;
+package com.netty.http.fileServer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
