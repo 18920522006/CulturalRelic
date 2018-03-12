@@ -1,0 +1,53 @@
+<!--        schema 用元素和类型                             order 对应的元素和类型                                      每个元素必须用命名空间限定        每个元素来源-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://192.168.31.228/netty/http/xml/pojo" elementFormDefault="qualified" targetNamespace="http://192.168.31.228/netty/http/xml/pojo">
+    <!--简易元素-->
+    <xs:element type="tns:order" name="order"/>
+    <!--复合类型-->
+    <xs:complexType name="address">
+        <xs:sequence>
+            <!--minOccurs="0" 在null的时候,字段就不出现在xml中了-->
+            <xs:element type="xs:string" name="street1" minOccurs="0"/>
+            <xs:element type="xs:string" name="street2" minOccurs="0"/>
+            <xs:element type="xs:string" name="city" minOccurs="0"/>
+            <xs:element type="xs:string" name="state" minOccurs="0"/>
+            <xs:element type="xs:string" name="postCode" minOccurs="0"/>
+            <xs:element type="xs:string" name="country" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="order">
+        <xs:sequence>
+            <!--客户信息-->
+            <xs:element name="customer" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element type="xs:string" name="firstName" minOccurs="0"/>
+                        <xs:element type="xs:string" name="lastName" minOccurs="0"/>
+                        <xs:element type="xs:string" name="middleName" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                    <xs:attribute type="xs:long" use="required" name="customerNumber"/>
+                </xs:complexType>
+            </xs:element>
+            <!--账单地址-->
+            <xs:element type="tns:address" name="billTo" minOccurs="0"/>
+            <!--寄送方式-->
+            <xs:element name="shipping" minOccurs="0">
+                <!--XSD 限定 / Facets-->
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="STANDARD_MAIL"/>
+                        <xs:enumeration value="PRIORITY_MAIL"/>
+                        <xs:enumeration value="INTERNATIONAL_MAIL"/>
+                        <xs:enumeration value="DOMESTIC_EXPRESS"/>
+                        <xs:enumeration value="INTERNATIONAL_EXPRESS"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <!--送货地址-->
+            <xs:element type="tns:address" name="shipTo" minOccurs="0"/>
+        </xs:sequence>
+        <!--订购数量-->
+        <xs:attribute type="xs:long" use="required" name="orderNumber"/>
+        <!--总价-->
+        <xs:attribute type="xs:float" name="total"/>
+    </xs:complexType>
+</xs:schema>
