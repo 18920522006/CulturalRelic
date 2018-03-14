@@ -173,7 +173,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
      * @param ctx
      * @param status
      */
-    private static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
+    public static void sendError(ChannelHandlerContext ctx, HttpResponseStatus status) {
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status,
                 Unpooled.copiedBuffer("Failure: " + status.toString(), CharsetUtil.UTF_8));
         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, "text/html;charset=UTF-8");
@@ -185,7 +185,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
      * @param response
      * @param file
      */
-    private static void setContentTypeHeader(HttpResponse response, File file) {
+    public static void setContentTypeHeader(HttpResponse response, File file) {
         MimetypesFileTypeMap mimetypesFileTypeMap = new MimetypesFileTypeMap();
         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, mimetypesFileTypeMap.getContentType(file.getPath()));
     }
@@ -195,7 +195,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
      * @param ctx
      * @param newuri
      */
-    private static void sendRedirect(ChannelHandlerContext ctx, String newuri){
+    public static void sendRedirect(ChannelHandlerContext ctx, String newuri){
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.FOUND);
         response.headers().set(HttpHeaders.Names.LOCATION, newuri);
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
