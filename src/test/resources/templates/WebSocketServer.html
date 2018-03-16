@@ -1,0 +1,47 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <form action="" onsubmit="return false;">
+        <input type="text" name="message" value="Netty最佳实践">
+        <br><br>
+        <input type="button" value="发送 WebSocket 请求消息" onclick="send(this.form.message.value);">
+        <hr color="blue"/>
+        <h3>服务端返回的应答消息</h3>
+        <textarea name="" id="responseText" cols="30" rows="10" style="width:500px;height:300px;"></textarea>
+    </form>
+    <script type="text/javascript">
+        var sokect;
+        if (window.WebSocket) {
+            sokect = new WebSocket("ws://localhost:8080/websocket");
+            sokect.onmessage = function (event) {
+                var ta = document.getElementById('responseText');
+                ta.value = '';
+                ta.value = event.data;
+            }
+            sokect.onopen = function (event) {
+                var ta = document.getElementById('responseText');
+                ta.value = '打开WebSocket服务正常，浏览器支持WebSocket！';
+            }
+            sokect.onclose = function (event) {
+                var ta = document.getElementById('responseText');
+                ta.value = "WebSocket 关闭";
+            }
+        } else {
+            alert('抱歉，您的浏览器不支持WebSocket协议！');
+        }
+        function send(message) {
+            if (!window.WebSocket) {
+                return;
+            }
+            if (sokect.readyState == WebSocket.OPEN) {
+                sokect.send(message);
+            } else {
+                alert('WebSocket连接没有建立！');
+            }
+        }
+    </script>
+</body>
+</html>
