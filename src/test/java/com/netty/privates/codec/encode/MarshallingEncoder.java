@@ -30,6 +30,9 @@ public class MarshallingEncoder {
             marshaller.start(output);
             marshaller.writeObject(msg);
             marshaller.finish();
+            /**
+             * 对象的实际容量
+             */
             out.setInt(lengthPos,out.writerIndex() - lengthPos - 4);
         } finally {
             marshaller.close();
