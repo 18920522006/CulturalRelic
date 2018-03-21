@@ -68,9 +68,7 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
                 message.setBody(marshallingDecoder.decode(in));
             }
             message.setHeader(header);
-            return message;
         }
-
-        return frame;
+        return message;
     }
 }
