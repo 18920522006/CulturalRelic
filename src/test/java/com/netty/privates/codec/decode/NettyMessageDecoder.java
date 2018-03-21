@@ -1,0 +1,76 @@
+package com.netty.privates.codec.decode;
+
+import com.netty.privates.pojo.Header;
+import com.netty.privates.pojo.NettyMessage;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author wangchen
+ * @date 2018/3/20 15:10
+ */
+public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
+
+    MarshallingDecoder marshallingDecoder;
+
+    public NettyMessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength) throws IOException {
+        super(maxFrameLength, lengthFieldOffset, lengthFieldLength);
+        marshallingDecoder = new MarshallingDecoder();
+    }
+
+    @Override
+    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        ByteBuf frame = (ByteBuf) super.decode(ctx, in);
+        if (frame == null) {
+            return null;
+        }
+        NettyMessage message = new NettyMessage();
+        Header header = new Header();
+        /**
+         * 继承 LengthFieldBasedFrameDecoder
+         * 按照空格结尾 粘粘包处理，发送一行接收一行
+         */
+        header.setCrcCode(in.readInt());
+        header.setLength(in.readInt());
+        header.setSessionID(in.readLong());
+        header.setType(in.readByte());
+        header.setPriority(in.readByte());
+
+        int attachmentSize = in.readInt();
+        if (attachmentSize > 0) {
+            Map<String, Object> attach = new HashMap<>(attachmentSize);
+            int keyLength = 0;
+            byte[] keyArray = null;
+            String key = null;
+            Object value = null;
+            /**
+             * 取附件
+             */
+            for (int i = 0; i < attachmentSize; i++) {
+                keyLength = in.readInt();
+                keyArray = new byte[keyLength];
+                /**
+                 * Key的数组
+                 */
+                in.readBytes(keyArray);
+                /**
+                 * Key的值
+                 */
+                key = new String(keyArray, "UTF-8");
+                attach.put(key, marshallingDecoder.decode(in));
+            }
+            if (in.readableBytes() > 4) {
+                message.setBody(marshallingDecoder.decode(in));
+            }
+            message.setHeader(header);
+            return message;
+        }
+
+        return frame;
+    }
+}
