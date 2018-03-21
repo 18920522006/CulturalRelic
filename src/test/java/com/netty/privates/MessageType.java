@@ -21,10 +21,34 @@ package com.netty.privates;
  * @version 1.0
  */
 public enum MessageType {
-
-    SERVICE_REQ((byte) 0), SERVICE_RESP((byte) 1), ONE_WAY((byte) 2), LOGIN_REQ(
-	    (byte) 3), LOGIN_RESP((byte) 4), HEARTBEAT_REQ((byte) 5), HEARTBEAT_RESP(
-	    (byte) 6);
+    /**
+     * 业务请求消息
+     */
+    SERVICE_REQ((byte) 0),
+    /**
+     * 业务响应消息
+     */
+    SERVICE_RESP((byte) 1),
+    /**
+     * 业务ONE WAY 消息(即是请求消息又是响应消息)
+     */
+    ONE_WAY((byte) 2),
+    /**
+     * 握手请求消息
+     */
+    LOGIN_REQ((byte) 3),
+    /**
+     * 握手应答消息
+     */
+    LOGIN_RESP((byte) 4),
+    /**
+     * 心跳请求消息
+     */
+    HEARTBEAT_REQ((byte) 5),
+    /**
+     * 心跳应答消息
+     */
+    HEARTBEAT_RESP((byte) 6);
 
     private byte value;
 
