@@ -64,7 +64,12 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
+        /**
+         * 分布式系统 迁移至专用缓存服务
+         */
+        nodeCheck.remove(ctx.channel().remoteAddress().toString());
+        ctx.close();
+        ctx.fireChannelRead(cause);
     }
 
     private NettyMessage buildResponse(byte result) {
