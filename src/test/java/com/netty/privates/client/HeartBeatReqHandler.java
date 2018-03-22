@@ -7,6 +7,7 @@ import com.netty.privates.pojo.NettyMessage;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Date;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -33,7 +34,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
 
         } else if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.HEARTBEAT_RESP.value()) {
-            System.out.println("服务器应答正常");
+            System.out.println("已经收到 服务端回应 心跳 ：" + new Date().toString());
         } else {
             ctx.fireChannelRead(msg);
         }
@@ -59,6 +60,7 @@ public class HeartBeatReqHandler extends ChannelHandlerAdapter {
         @Override
         public void run() {
             NettyMessage message = buildHeartBeat();
+            System.out.println("发送心跳 ：" + new Date().toString());
             ctx.writeAndFlush(message);
         }
 

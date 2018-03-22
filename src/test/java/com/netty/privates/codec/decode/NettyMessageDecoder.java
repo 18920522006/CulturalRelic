@@ -25,6 +25,9 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
 
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        /**
+         * 定长分隔符 解码
+         */
         ByteBuf frame = (ByteBuf) super.decode(ctx, in);
         if (frame == null) {
             return null;
@@ -35,13 +38,13 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
          * 继承 LengthFieldBasedFrameDecoder
          * 按照空格结尾 粘粘包处理，发送一行接收一行
          */
-        header.setCrcCode(in.readInt());
-        header.setLength(in.readInt());
-        header.setSessionID(in.readLong());
-        header.setType(in.readByte());
-        header.setPriority(in.readByte());
+        header.setCrcCode(frame.readInt());
+        header.setLength(frame.readInt());
+        header.setSessionID(frame.readLong());
+        header.setType(frame.readByte());
+        header.setPriority(frame.readByte());
 
-        int attachmentSize = in.readInt();
+        int attachmentSize = frame.readInt();
         if (attachmentSize > 0) {
             Map<String, Object> attach = new HashMap<>(attachmentSize);
             int keyLength = 0;
@@ -52,23 +55,23 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
              * 取附件
              */
             for (int i = 0; i < attachmentSize; i++) {
-                keyLength = in.readInt();
+                keyLength = frame.readInt();
                 keyArray = new byte[keyLength];
                 /**
                  * Key的数组
                  */
-                in.readBytes(keyArray);
+                frame.readBytes(keyArray);
                 /**
                  * Key的值
                  */
                 key = new String(keyArray, "UTF-8");
-                attach.put(key, marshallingDecoder.decode(in));
+                attach.put(key, marshallingDecoder.decode(frame));
             }
-            if (in.readableBytes() > 4) {
-                message.setBody(marshallingDecoder.decode(in));
-            }
-            message.setHeader(header);
         }
+        if (frame.readableBytes() > 4) {
+            message.setBody(marshallingDecoder.decode(frame));
+        }
+        message.setHeader(header);
         return message;
     }
 }

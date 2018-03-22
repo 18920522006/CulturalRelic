@@ -15,6 +15,7 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.writeAndFlush(buildLoginReq());
+        System.out.println("请求握手");
     }
 
     @Override
@@ -23,7 +24,7 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter {
         /**
          * 是否为握手应答消息
          */
-        if (message.getHeader() != null && message.getHeader().getType() == MessageType.HEARTBEAT_RESP.value()) {
+        if (message.getHeader() != null && message.getHeader().getType() == MessageType.LOGIN_RESP.value()) {
             byte loginResult = (byte) message.getBody();
             /**
              * 约定如果捂手成功为0 否则失败 关闭链路
@@ -39,7 +40,7 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-
+        ctx.fireChannelRead(cause);
     }
 
     /**

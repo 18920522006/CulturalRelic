@@ -33,7 +33,7 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
          * 处理请求的握手消息，其他消息向下传递
          */
         if (message.getHeader() != null
-                && message.getHeader().getType() == MessageType.HEARTBEAT_REQ.value()) {
+                && message.getHeader().getType() == MessageType.LOGIN_REQ.value()) {
             String nodeIndex = ctx.channel().remoteAddress().toString();
             NettyMessage loginResp = null;
             /**
@@ -41,7 +41,11 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
              */
             if (nodeCheck.containsKey(nodeIndex)) {
                 loginResp = buildResponse((byte) -1);
-            } else {
+            }
+            /**
+             * 比对ip 返回连接标志
+             */
+            else {
                 InetSocketAddress address = (InetSocketAddress) ctx.channel().remoteAddress();
                 String ip = address.getAddress().getHostAddress();
                 boolean isOK = false;
@@ -55,6 +59,7 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
                 if (isOK) {
                     nodeCheck.put(nodeIndex, true);
                 }
+                System.out.println("握手成功");
                 ctx.writeAndFlush(loginResp);
             }
         } else {

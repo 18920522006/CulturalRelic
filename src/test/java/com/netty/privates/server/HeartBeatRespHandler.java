@@ -6,6 +6,8 @@ import com.netty.privates.pojo.NettyMessage;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.Date;
+
 /**
  * @author wangchen
  * @date 2018/3/21 15:18
@@ -20,7 +22,7 @@ public class HeartBeatRespHandler extends ChannelHandlerAdapter {
         if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.HEARTBEAT_REQ.value()) {
             message = buildHeartBeat();
-            System.out.println("应答客户端");
+            System.out.println("应答客户端 心跳 ：" + new Date().toString());
             ctx.writeAndFlush(message);
         } else {
             ctx.fireChannelRead(msg);
@@ -33,5 +35,10 @@ public class HeartBeatRespHandler extends ChannelHandlerAdapter {
         message.setHeader(header);
         header.setType(MessageType.HEARTBEAT_RESP.value());
         return  message;
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.fireChannelRead(cause);
     }
 }
