@@ -43,7 +43,7 @@ public class TestUserInfo {
         UserInfoReqProto.UserInfoReq infoReq = builder.build();
         byte[] byteArray = infoReq.toByteArray();
 
-        byte[] jackson = JSON.toJSONBytes(userInfo);
+        byte[] fastjson = JSON.toJSONBytes(userInfo);
 
 
         System.out.println("jdk 序列化对象大小为：" + b.length);
@@ -54,6 +54,6 @@ public class TestUserInfo {
         System.out.println("--------------------------------------------");
         System.out.println("Protobuf编码大小为：" + byteArray.length);
         System.out.println("--------------------------------------------");
-        System.out.println("Jackson编码大小为：" + jackson.length);
+        System.out.println("fastjson编码大小为：" + fastjson.length);
     }
 }

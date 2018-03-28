@@ -89,7 +89,7 @@ public class PerformTestUserInfo {
         }
         endTime = System.currentTimeMillis();
 
-        System.out.println("Jackson 100万次 时间为：" + (endTime - startTime) + " ms");
+        System.out.println("fastjson 100万次 时间为：" + (endTime - startTime) + " ms");
 
 
     }
