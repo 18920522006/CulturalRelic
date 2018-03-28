@@ -1,5 +1,6 @@
 package com.netty.serializatble;
 
+import com.alibaba.fastjson.JSON;
 import org.msgpack.MessagePack;
 
 import java.io.ByteArrayOutputStream;
@@ -78,5 +79,18 @@ public class PerformTestUserInfo {
         endTime = System.currentTimeMillis();
 
         System.out.println("Protobuf 100万次 时间为：" + (endTime - startTime) + " ms");
+
+        System.out.println("--------------------------------------------");
+
+        startTime = System.currentTimeMillis();
+
+        for (int i = 0; i < loop; i++) {
+            byte[] jackson = JSON.toJSONBytes(userInfo);
+        }
+        endTime = System.currentTimeMillis();
+
+        System.out.println("Jackson 100万次 时间为：" + (endTime - startTime) + " ms");
+
+
     }
 }

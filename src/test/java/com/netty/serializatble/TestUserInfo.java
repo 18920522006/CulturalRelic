@@ -1,5 +1,6 @@
 package com.netty.serializatble;
 
+import com.alibaba.fastjson.JSON;
 import org.msgpack.MessagePack;
 
 import java.io.ByteArrayOutputStream;
@@ -42,6 +43,8 @@ public class TestUserInfo {
         UserInfoReqProto.UserInfoReq infoReq = builder.build();
         byte[] byteArray = infoReq.toByteArray();
 
+        byte[] jackson = JSON.toJSONBytes(userInfo);
+
 
         System.out.println("jdk 序列化对象大小为：" + b.length);
         System.out.println("--------------------------------------------");
@@ -50,5 +53,7 @@ public class TestUserInfo {
         System.out.println("MessagePack编码大小为：" + bytes.length);
         System.out.println("--------------------------------------------");
         System.out.println("Protobuf编码大小为：" + byteArray.length);
+        System.out.println("--------------------------------------------");
+        System.out.println("Jackson编码大小为：" + jackson.length);
     }
 }
