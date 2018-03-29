@@ -24,8 +24,4 @@ public class ObjectConvertUtil {
         requestFile.setStartPosition(0);
         return requestFile;
     }
-
-    public static void main(String[] args) throws Exception {
-        ObjectConvertUtil.convert(new File("C:\\Users\\wangchen\\Downloads\\SubscribeReq.proto"));
-    }
 }
