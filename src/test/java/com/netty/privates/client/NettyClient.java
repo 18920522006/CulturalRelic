@@ -3,6 +3,7 @@ package com.netty.privates.client;
 import com.netty.privates.NettyConstant;
 import com.netty.privates.codec.decode.NettyMessageDecoder;
 import com.netty.privates.codec.encode.NettyMessageEncoder;
+import com.netty.privates.util.ObjectConvertUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -13,9 +14,16 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,9 +34,41 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
 
+    private static final Logger log = LoggerFactory.getLogger(NettyClient.class);
+
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-    public void connect(int port,String host) throws Exception {
+    private int port;
+
+    private String host;
+
+    private File file;
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void connect() throws Exception {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -65,7 +105,11 @@ public class NettyClient {
                                     /**
                                      * 心跳
                                      */
-                                    .addLast("heartBeatHandler", new HeartBeatReqHandler());
+                                    .addLast("heartBeatHandler", new HeartBeatReqHandler())
+                                    /**
+                                     * 传输文件
+                                     */
+                                    .addLast("fileHandler", new FileUploadReqHandler(ObjectConvertUtil.convert(file)));
                         }
                     });
             ChannelFuture future = b.connect(host,port).sync();
@@ -78,7 +122,7 @@ public class NettyClient {
                 @Override
                 public void run() {
 
-                    System.out.println("链路连接中断，开始重新连接！");
+                    log.info("链路连接中断，开始重新连接！" + new Date().toString());
 
                     try {
                         /**
@@ -88,7 +132,7 @@ public class NettyClient {
                         /**
                          * 更换地址
                          */
-                        connect(NettyConstant.LOCAL_PORT, NettyConstant.REMOTE_IP);
+                        connect();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (Exception e) {
@@ -100,6 +144,10 @@ public class NettyClient {
     }
 
     public static void main(String[] args) throws Exception {
-        new NettyClient().connect(NettyConstant.PORT, NettyConstant.LOCAL_IP);
+        NettyClient nettyClient = new NettyClient();
+        nettyClient.setHost(NettyConstant.REMOTE_IP);
+        nettyClient.setPort(NettyConstant.LOCAL_PORT);
+        nettyClient.setFile(new File("C:\\Users\\wangchen\\Downloads\\SubscribeReq.proto"));
+        nettyClient.connect();
     }
 }

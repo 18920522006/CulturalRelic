@@ -3,8 +3,13 @@ package com.netty.privates.client;
 import com.netty.privates.MessageType;
 import com.netty.privates.pojo.Header;
 import com.netty.privates.pojo.NettyMessage;
+import com.netty.privates.util.NettyMessageUtil;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 /**
  * @author wangchen
@@ -12,10 +17,12 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class LoginAuthReqHandler extends ChannelHandlerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(LoginAuthReqHandler.class);
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(buildLoginReq());
-        System.out.println("请求握手");
+        log.info("客户端请求握手：" + new Date().toString());
+        ctx.writeAndFlush(NettyMessageUtil.buildNettyMessage(MessageType.LOGIN_REQ.value()));
     }
 
     @Override
@@ -32,6 +39,7 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter {
             if (loginResult != (byte) 0) {
                 ctx.close();
             }
+            log.info("客户端收到，服务端应答。三次握手完成：" + new Date().toString());
             ctx.fireChannelRead(msg);
         } else {
             ctx.fireChannelRead(msg);
@@ -43,15 +51,4 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter {
         ctx.fireChannelRead(cause);
     }
 
-    /**
-     * 请求握手消息
-     * @return
-     */
-    private NettyMessage buildLoginReq() {
-        NettyMessage message = new NettyMessage();
-        Header header = new Header();
-        message.setHeader(header);
-        header.setType(MessageType.LOGIN_REQ.value());
-        return message;
-    }
 }

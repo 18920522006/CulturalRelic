@@ -1,10 +1,14 @@
 package com.netty.privates.server;
 
 import com.netty.privates.MessageType;
+import com.netty.privates.client.HeartBeatReqHandler;
 import com.netty.privates.pojo.Header;
 import com.netty.privates.pojo.NettyMessage;
+import com.netty.privates.util.NettyMessageUtil;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 
@@ -13,6 +17,9 @@ import java.util.Date;
  * @date 2018/3/21 15:18
  */
 public class HeartBeatRespHandler extends ChannelHandlerAdapter {
+
+    private static final Logger log = LoggerFactory.getLogger(HeartBeatRespHandler.class);
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         NettyMessage message = (NettyMessage) msg;
@@ -21,20 +28,13 @@ public class HeartBeatRespHandler extends ChannelHandlerAdapter {
          */
         if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.HEARTBEAT_REQ.value()) {
-            message = buildHeartBeat();
-            System.out.println("应答客户端 心跳 ：" + new Date().toString());
-            ctx.writeAndFlush(message);
-        } else {
-            ctx.fireChannelRead(msg);
+            log.info("服务端应答心跳 ：" + new Date().toString());
+            /**
+             * 应答客户端心跳
+             */
+            ctx.writeAndFlush(NettyMessageUtil.buildNettyMessage(MessageType.HEARTBEAT_RESP.value()));
         }
-    }
-
-    private NettyMessage buildHeartBeat() {
-        NettyMessage message = new NettyMessage();
-        Header header = new Header();
-        message.setHeader(header);
-        header.setType(MessageType.HEARTBEAT_RESP.value());
-        return  message;
+        ctx.fireChannelRead(msg);
     }
 
     @Override

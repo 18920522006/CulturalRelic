@@ -1,13 +1,18 @@
 package com.netty.privates.server;
 
 import com.netty.privates.MessageType;
+import com.netty.privates.client.LoginAuthReqHandler;
 import com.netty.privates.pojo.Header;
 import com.netty.privates.pojo.NettyMessage;
+import com.netty.privates.util.NettyMessageUtil;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2018/3/21 14:01
  */
 public class LoginAuthRespHandler extends ChannelHandlerAdapter {
+
+    private static final Logger log = LoggerFactory.getLogger(LoginAuthRespHandler.class);
+
     /**
      * 用来存已经登录的名单
      */
@@ -59,7 +67,7 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
                 if (isOK) {
                     nodeCheck.put(nodeIndex, true);
                 }
-                System.out.println("握手成功");
+                log.info("服务端接到握手请求，并发送第三次握手给客户端：" + new Date().toString());
                 ctx.writeAndFlush(loginResp);
             }
         } else {
@@ -78,11 +86,6 @@ public class LoginAuthRespHandler extends ChannelHandlerAdapter {
     }
 
     private NettyMessage buildResponse(byte result) {
-        NettyMessage message = new NettyMessage();
-        Header header = new Header();
-        message.setHeader(header);
-        header.setType(MessageType.LOGIN_RESP.value());
-        message.setBody(result);
-        return message;
+        return NettyMessageUtil.buildNettyMessage(MessageType.LOGIN_RESP.value(), result);
     }
 }
