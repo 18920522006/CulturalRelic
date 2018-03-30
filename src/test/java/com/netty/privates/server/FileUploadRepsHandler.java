@@ -88,7 +88,10 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
              *  应答客户端
              */
             ResponseFile responseFile = new ResponseFile();
-            responseFile.setComplete(fileSize == randomAccessFile.length());
+            /**
+             * 先比较长度,每次比较MD5,需重新计算，太慢
+             */
+            responseFile.setComplete(fileSize == randomAccessFile.length() && fileMd5.equals(MD5FileUtil.getMD5String(file)));
             responseFile.setFileName(fileName);
             responseFile.setProgress(math(randomAccessFile.length(), fileSize));
             ctx.writeAndFlush(NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_RESP.value(), responseFile));
