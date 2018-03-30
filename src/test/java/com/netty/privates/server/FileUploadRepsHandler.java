@@ -1,17 +1,24 @@
 package com.netty.privates.server;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.netty.privates.MessageType;
 import com.netty.privates.model.RequestFile;
+import com.netty.privates.model.ResponseFile;
 import com.netty.privates.pojo.NettyMessage;
 import com.netty.privates.util.MD5FileUtil;
+import com.netty.privates.util.NettyMessageUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.eclipse.jdt.internal.compiler.classfmt.MethodInfoWithAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 
 /**
@@ -32,7 +39,7 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
     private RandomAccessFile randomAccessFile;
 
     @Override
-    protected void messageReceived(ChannelHandlerContext channelHandlerContext, NettyMessage message) throws Exception {
+    protected void messageReceived(ChannelHandlerContext ctx, NettyMessage message) throws Exception {
         /**
          * 收到客户端发送文件
          */
@@ -47,18 +54,16 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
             String fileSectionMd5 = request.getFileSectionMd5();
             String fileName = request.getFileName();
             long fileSize = request.getFileSize();
-
             /**
              * 新文件
              */
             File file = new File(file_dir + File.separator + fileMd5 + "_"+ fileName);
-
+            randomAccessFile = new RandomAccessFile(file, "rw");
             /**
              * 文件已经存在 断点续传
              */
             if (file.exists()) {
                 byte[] bytes = new byte[8192];
-                randomAccessFile = new RandomAccessFile(file, "rw");
                 randomAccessFile.seek(startPosition);
                 randomAccessFile.read(bytes);
                 /**
@@ -77,19 +82,18 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
              * 新传入的文件
              */
             else {
-                randomAccessFile = new RandomAccessFile(file, "rw");
                 randomAccessFile.seek(startPosition);
                 randomAccessFile.write(content);
             }
+            /**
+             *  应答客户端
+             */
+            ResponseFile responseFile = new ResponseFile();
+            responseFile.setComplete(fileSize == randomAccessFile.length());
+            responseFile.setFileName(fileName);
+            responseFile.setProgress(math(randomAccessFile.length(), fileSize));
+            ctx.writeAndFlush(NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_RESP.value(), responseFile));
         }
-    }
-
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        /**
-         * 应答客户端 下载完成
-         */
-
     }
 
     @Override
@@ -103,5 +107,15 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
             }
         }
         ctx.close();
+    }
+
+    /**
+     * 保留两位小数
+     */
+    private static String math(long divisor1, long divisor2) {
+        double percent = Double.parseDouble(String.valueOf(divisor1))/ Double.parseDouble(String.valueOf(divisor2));
+        NumberFormat nt = NumberFormat.getPercentInstance();
+        nt.setMinimumFractionDigits(5);
+        return nt.format(percent);
     }
 }

@@ -37,6 +37,10 @@ public class RequestFile implements Serializable {
      */
     private String fileSectionMd5;
     /**
+     * 片段数组长度
+     */
+    private long fileSectionSize;
+    /**
      * 文件类型
      */
     private String fileType;
@@ -99,6 +103,14 @@ public class RequestFile implements Serializable {
 
     public void setFileSectionMd5(String fileSectionMd5) {
         this.fileSectionMd5 = fileSectionMd5;
+    }
+
+    public long getFileSectionSize() {
+        return fileSectionSize;
+    }
+
+    public void setFileSectionSize(long fileSectionSize) {
+        this.fileSectionSize = fileSectionSize;
     }
 
     public String getFileType() {

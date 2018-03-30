@@ -9,6 +9,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,10 +27,10 @@ public class NettyMessageEncoder extends MessageToByteEncoder<NettyMessage> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext channelHandlerContext, NettyMessage msg, ByteBuf sendBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, NettyMessage msg, ByteBuf sendBuf) {
         Header header = msg.getHeader();
         if (msg == null || header == null) {
-            throw new Exception("The encode message is null");
+            throw new UnsupportedOperationException("消息或消息头不能为空！");
         }
         sendBuf.writeInt(header.getCrcCode());
         sendBuf.writeInt(header.getLength());
@@ -47,7 +48,11 @@ public class NettyMessageEncoder extends MessageToByteEncoder<NettyMessage> {
 
         for (Iterator<String> it = header.getAttachment().keySet().iterator(); it.hasNext(); ){
             key = it.next();
-            keyArray = key.getBytes("UTF-8");
+            try {
+                keyArray = key.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             sendBuf.writeInt(keyArray.length);
             sendBuf.writeBytes(keyArray);
             value = header.getAttachment().get(key);
@@ -55,14 +60,22 @@ public class NettyMessageEncoder extends MessageToByteEncoder<NettyMessage> {
              * 使用 Jboss Marshalling 序列化 value
              * 加入到 sendBuf 中
              */
-            marshallingEncoder.encode(value, sendBuf);
+            try {
+                marshallingEncoder.encode(value, sendBuf);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         key = null;
         keyArray = null;
         value = null;
         if (msg.getBody() != null) {
-            marshallingEncoder.encode(msg.getBody(), sendBuf);
+            try {
+                marshallingEncoder.encode(msg.getBody(), sendBuf);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             sendBuf.writeInt(0);
         }
