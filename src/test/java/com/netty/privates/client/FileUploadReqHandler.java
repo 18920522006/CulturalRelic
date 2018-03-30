@@ -48,7 +48,7 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
             /**
              * 指定大小的数组
              */
-            byte[] bytes = new byte[(int) request.getFile().length()];
+            byte[] bytes = new byte[8192];
 
             randomAccessFile = new RandomAccessFile(request.getFile(), "r");
 
@@ -63,7 +63,9 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
                 nettyMessage.setBody(request);
 
                 ctx.writeAndFlush(nettyMessage);
-                randomAccessFile.seek(request.getStartPosition() + readByteSize);
+
+                request.setStartPosition(request.getStartPosition() + readByteSize);
+                randomAccessFile.seek(request.getStartPosition());
             }
             if (readByteSize == -1) {
                 randomAccessFile.close();

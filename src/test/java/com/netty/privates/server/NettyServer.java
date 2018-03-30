@@ -53,7 +53,7 @@ public class NettyServer {
                                     /**
                                      * 50秒内没有读取到对方任何信息，需要主动关闭链路
                                      */
-                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(50))
+                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(10))
                                     /**
                                      * 握手
                                      */

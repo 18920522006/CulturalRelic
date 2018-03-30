@@ -38,7 +38,6 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
          */
         if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.SERVICE_REQ.value()) {
-            log.info("接收文件 ：" + new Date().toString());
             RequestFile request = (RequestFile) message.getBody();
 
             byte[] content = request.getContent();
@@ -50,26 +49,22 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
             long fileSize = request.getFileSize();
 
             /**
-             * 文件路径
+             * 新文件
              */
-            String path = file_dir + File.separator + fileMd5 + "_"+ fileName;
-
-            log.info(path);
-
-            File file = new File(path);
+            File file = new File(file_dir + File.separator + fileMd5 + "_"+ fileName);
 
             /**
              * 文件已经存在 断点续传
              */
             if (file.exists()) {
-                byte[] bytes = new byte[(int) (fileSize)];
-                randomAccessFile = new RandomAccessFile(new File(path), "rw");
+                byte[] bytes = new byte[8192];
+                randomAccessFile = new RandomAccessFile(file, "rw");
                 randomAccessFile.seek(startPosition);
                 randomAccessFile.read(bytes);
                 /**
                  * 已经存在的MD5值 片段
                  */
-                String md5String = MD5FileUtil.getMD5String(file);
+                String md5String = MD5FileUtil.getMD5String(bytes);
                 /**
                  * 如果不一致覆盖
                  */
@@ -82,7 +77,7 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
              * 新传入的文件
              */
             else {
-                randomAccessFile = new RandomAccessFile(new File(path), "rw");
+                randomAccessFile = new RandomAccessFile(file, "rw");
                 randomAccessFile.seek(startPosition);
                 randomAccessFile.write(content);
             }
@@ -90,9 +85,17 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
     }
 
     @Override
+    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+        /**
+         * 应答客户端 下载完成
+         */
+
+    }
+
+    @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
-        if(randomAccessFile != null ){
+        if(randomAccessFile != null){
             try {
                 randomAccessFile.close();
             } catch (IOException e) {

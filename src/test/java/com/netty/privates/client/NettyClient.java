@@ -34,6 +34,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
 
+    public static void main(String[] args) throws Exception {
+        NettyClient nettyClient = new NettyClient();
+        nettyClient.setHost(NettyConstant.REMOTE_IP);
+        nettyClient.setPort(NettyConstant.LOCAL_PORT);
+        nettyClient.setFile(new File("C:\\Users\\wangchen\\Downloads\\cs1_6_Setup.exe"));
+        nettyClient.connect();
+    }
+
     private static final Logger log = LoggerFactory.getLogger(NettyClient.class);
 
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -97,7 +105,7 @@ public class NettyClient {
                                     /**
                                      * 50秒内没有读取到对方任何信息，需要主动关闭链路
                                      */
-                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(50))
+                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(10))
                                     /**
                                      * 握手
                                      */
@@ -143,11 +151,5 @@ public class NettyClient {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        NettyClient nettyClient = new NettyClient();
-        nettyClient.setHost(NettyConstant.REMOTE_IP);
-        nettyClient.setPort(NettyConstant.LOCAL_PORT);
-        nettyClient.setFile(new File("C:\\Users\\wangchen\\Downloads\\SubscribeReq.proto"));
-        nettyClient.connect();
-    }
+
 }
