@@ -69,7 +69,6 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
                  * 传输对象
                  */
                 request.setContent(bytes);
-                request.setEndPosition(request.getStartPosition() + readByteSize);
                 request.setFileSize(randomAccessFile.length());
                 request.setFileSectionMd5(MD5FileUtil.getMD5String(bytes));
                 /**
