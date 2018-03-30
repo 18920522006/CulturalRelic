@@ -19,6 +19,10 @@ public class ResponseFile implements Serializable {
      * 文件名
      */
     private String fileName;
+    /**
+     * 文件结尾位置
+     */
+    private long endPosition;
 
     public boolean isComplete() {
         return complete;
@@ -42,5 +46,13 @@ public class ResponseFile implements Serializable {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public long getEndPosition() {
+        return endPosition;
+    }
+
+    public void setEndPosition(long endPosition) {
+        this.endPosition = endPosition;
     }
 }
