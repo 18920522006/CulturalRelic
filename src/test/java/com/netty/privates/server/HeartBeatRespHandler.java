@@ -33,8 +33,9 @@ public class HeartBeatRespHandler extends ChannelHandlerAdapter {
              * 应答客户端心跳
              */
             ctx.writeAndFlush(NettyMessageUtil.buildNettyMessage(MessageType.HEARTBEAT_RESP.value()));
+        } else {
+            ctx.fireChannelRead(msg);
         }
-        ctx.fireChannelRead(msg);
     }
 
     @Override
