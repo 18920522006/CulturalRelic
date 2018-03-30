@@ -49,7 +49,6 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
 
             byte[] content = request.getContent();
             long startPosition = request.getStartPosition();
-            long endPosition = request.getEndPosition();
             String fileMd5 = request.getFileMd5();
             String fileSectionMd5 = request.getFileSectionMd5();
             String fileName = request.getFileName();

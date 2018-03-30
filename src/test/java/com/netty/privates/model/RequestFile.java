@@ -21,10 +21,6 @@ public class RequestFile implements Serializable {
      */
     private long startPosition;
     /**
-     * 结尾位置
-     */
-    private long endPosition;
-    /**
      * 内容字节数组
      */
     private byte[] content;
@@ -71,14 +67,6 @@ public class RequestFile implements Serializable {
 
     public void setStartPosition(long startPosition) {
         this.startPosition = startPosition;
-    }
-
-    public long getEndPosition() {
-        return endPosition;
-    }
-
-    public void setEndPosition(long endPosition) {
-        this.endPosition = endPosition;
     }
 
     public byte[] getContent() {
