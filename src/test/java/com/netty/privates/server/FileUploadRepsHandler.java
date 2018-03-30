@@ -1,9 +1,9 @@
 package com.netty.privates.server;
 
-import com.netty.file.util.MD5FileUtil;
 import com.netty.privates.MessageType;
 import com.netty.privates.model.RequestFile;
 import com.netty.privates.pojo.NettyMessage;
+import com.netty.privates.util.MD5FileUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
                 /**
                  * 已经存在的MD5值 片段
                  */
-                String md5String = MD5FileUtil.getFileMD5String(file);
+                String md5String = MD5FileUtil.getMD5String(file);
                 /**
                  * 如果不一致覆盖
                  */
