@@ -15,7 +15,6 @@ public class ObjectConvertUtil {
         RequestFile requestFile = new RequestFile();
         requestFile.setFile(file);
         requestFile.setFileName(file.getName());
-
         requestFile.setFileMd5(MD5FileUtil.getMD5String(file));
         requestFile.setFileType(new MimetypesFileTypeMap().getContentType(file));
         /**
