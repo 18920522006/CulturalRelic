@@ -22,7 +22,7 @@ public class ResponseFile implements Serializable {
     /**
      * 文件结尾位置
      */
-    private long endPosition;
+    private Long endPosition;
 
     public boolean isComplete() {
         return complete;
@@ -48,11 +48,11 @@ public class ResponseFile implements Serializable {
         this.fileName = fileName;
     }
 
-    public long getEndPosition() {
+    public Long getEndPosition() {
         return endPosition;
     }
 
-    public void setEndPosition(long endPosition) {
+    public void setEndPosition(Long endPosition) {
         this.endPosition = endPosition;
     }
 }
