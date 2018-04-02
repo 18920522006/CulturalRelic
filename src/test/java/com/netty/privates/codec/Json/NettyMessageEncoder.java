@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author wangchen
  * @date 2018/4/2 13:43
- *.addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.weakCachingConcurrentResolver(null)))
+ * .addLast(new ObjectDecoder(Integer.MAX_VALUE, ClassResolvers.weakCachingConcurrentResolver(null)))
  * .addLast(new NettyMessageDecoder())
  * .addLast(new ObjectEncoder())
  * .addLast(new NettyMessageEncoder())
