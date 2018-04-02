@@ -114,6 +114,8 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
             if (fileSize == randomAccessFile.length() && fileMd5.equals(MD5FileUtil.getMD5String(file))) {
                 responseFile.setComplete(true);
                 responseFile.setProgress(math(randomAccessFile.length(), fileSize));
+                randomAccessFile.close();
+                randomAccessFile = null;
             } else {
                 responseFile.setComplete(false);
                 responseFile.setEndPosition(randomAccessFile.getFilePointer());

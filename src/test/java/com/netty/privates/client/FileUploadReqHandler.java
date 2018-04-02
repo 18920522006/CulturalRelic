@@ -71,7 +71,8 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
              * 文件已经存在
              */
             if (complete) {
-                log.info("文件已经存在服务器！");
+                log.info("文件传输完毕！");
+                randomAccessFile.close();
                 ctx.close();
             } else {
                 request.setStartPosition(responseFile.getEndPosition());
@@ -95,17 +96,25 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
     }
 
     private void read0(ChannelHandlerContext ctx) throws IOException {
-        byte[] bytes = new byte[8192];
+        byte[] bytes = null;
 
         randomAccessFile = new RandomAccessFile(request.getFile(), "r");
         randomAccessFile.seek(request.getStartPosition());
 
+        int capacity = (int) (randomAccessFile.length() - request.getStartPosition());
+
+        /**
+         * 计算剩余量
+         */
+        if (capacity < 8192) {
+            bytes = new byte[capacity];
+        } else {
+            bytes = new byte[8192];
+        }
+
         int readByteSize = 0;
         if ((readByteSize = randomAccessFile.read(bytes)) != -1 && (randomAccessFile.length() - request.getStartPosition()) > 0) {
-            if (readByteSize < 8192) {
-                bytes = new byte[readByteSize];
-                randomAccessFile.read(bytes);
-            }
+
             /**
              * 传输对象
              */
