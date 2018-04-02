@@ -1,4 +1,4 @@
-package com.netty.privates.codec;
+package com.netty.privates.codec.marshalling;
 
 import org.jboss.marshalling.*;
 

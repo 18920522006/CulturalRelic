@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package com.netty.privates.codec.encode;
+package com.netty.privates.codec.marshalling.encode;
 
 import io.netty.buffer.ByteBuf;
 import org.jboss.marshalling.ByteOutput;

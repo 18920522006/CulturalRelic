@@ -1,7 +1,7 @@
-package com.netty.privates.codec.decode;
+package com.netty.privates.codec.marshalling.decode;
 
 
-import com.netty.privates.codec.MarshallingCodecFactory;
+import com.netty.privates.codec.marshalling.MarshallingCodecFactory;
 import io.netty.buffer.ByteBuf;
 import org.jboss.marshalling.ByteInput;
 import org.jboss.marshalling.Unmarshaller;

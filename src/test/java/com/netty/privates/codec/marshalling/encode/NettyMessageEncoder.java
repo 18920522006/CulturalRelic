@@ -1,17 +1,14 @@
-package com.netty.privates.codec.encode;
+package com.netty.privates.codec.marshalling.encode;
 
 import com.netty.privates.pojo.Header;
 import com.netty.privates.pojo.NettyMessage;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import io.netty.handler.codec.MessageToMessageEncoder;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author wangchen

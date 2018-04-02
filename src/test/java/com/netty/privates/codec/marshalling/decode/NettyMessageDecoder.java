@@ -1,4 +1,4 @@
-package com.netty.privates.codec.decode;
+package com.netty.privates.codec.marshalling.decode;
 
 import com.netty.privates.pojo.Header;
 import com.netty.privates.pojo.NettyMessage;
