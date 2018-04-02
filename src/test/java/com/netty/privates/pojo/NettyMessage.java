@@ -14,6 +14,11 @@ public class NettyMessage {
      */
     private Object body;
 
+    /**
+     * 消息体类型, 使用 fastjson 必须指定解码类型
+     */
+    private Class bodyClass;
+
     public Header getHeader() {
         return header;
     }
@@ -26,7 +31,16 @@ public class NettyMessage {
         return body;
     }
 
-    public void setBody(Object body) {
+    public NettyMessage setBody(Object body) {
         this.body = body;
+        return this;
+    }
+
+    public Class getBodyClass() {
+        return bodyClass;
+    }
+
+    public void setBodyClass(Class bodyClass) {
+        this.bodyClass = bodyClass;
     }
 }
