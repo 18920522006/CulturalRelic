@@ -32,7 +32,7 @@ public class LoginAuthReqHandler extends ChannelHandlerAdapter {
          * 是否为握手应答消息
          */
         if (message.getHeader() != null && message.getHeader().getType() == MessageType.LOGIN_RESP.value()) {
-            byte loginResult = (byte) message.getBody();
+            byte loginResult = Byte.parseByte(message.getBody().toString());
             /**
              * 约定如果捂手成功为0 否则失败 关闭链路
              */
