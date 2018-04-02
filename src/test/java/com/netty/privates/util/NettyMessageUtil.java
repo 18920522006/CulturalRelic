@@ -23,7 +23,6 @@ public class NettyMessageUtil {
         header.setType(type);
         return  message;
     }
-
     /**
      * 返回Netty标准协议对象
      * @param type 消息头类型
