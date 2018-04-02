@@ -16,10 +16,6 @@ public class ResponseFile implements Serializable {
      */
     private String progress;
     /**
-     * 文件名
-     */
-    private String fileName;
-    /**
      * 文件结尾位置
      */
     private Long endPosition;
@@ -38,14 +34,6 @@ public class ResponseFile implements Serializable {
 
     public void setProgress(String progress) {
         this.progress = progress;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public Long getEndPosition() {

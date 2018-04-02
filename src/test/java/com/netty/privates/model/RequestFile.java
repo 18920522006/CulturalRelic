@@ -29,10 +29,6 @@ public class RequestFile implements Serializable {
      */
     private String fileMd5;
     /**
-     * 片段的MD5值
-     */
-    private String fileSectionMd5;
-    /**
      * 文件类型
      */
     private String fileType;
@@ -79,14 +75,6 @@ public class RequestFile implements Serializable {
 
     public void setFileMd5(String fileMd5) {
         this.fileMd5 = fileMd5;
-    }
-
-    public String getFileSectionMd5() {
-        return fileSectionMd5;
-    }
-
-    public void setFileSectionMd5(String fileSectionMd5) {
-        this.fileSectionMd5 = fileSectionMd5;
     }
 
     public String getFileType() {

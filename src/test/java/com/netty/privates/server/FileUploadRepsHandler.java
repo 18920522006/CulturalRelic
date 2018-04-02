@@ -1,6 +1,5 @@
 package com.netty.privates.server;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.netty.privates.MessageType;
 import com.netty.privates.model.RequestFile;
 import com.netty.privates.model.ResponseFile;
@@ -9,17 +8,14 @@ import com.netty.privates.util.MD5FileUtil;
 import com.netty.privates.util.NettyMessageUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.eclipse.jdt.internal.compiler.classfmt.MethodInfoWithAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Date;
+import java.util.Collections;
 
 /**
  * @author wangchen
@@ -40,61 +36,94 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, NettyMessage message) throws Exception {
+
         /**
-         * 收到客户端发送文件
+         * 接收客户端询问
          */
         if (message.getHeader() != null
-                && message.getHeader().getType() == MessageType.SERVICE_REQ.value()) {
-            RequestFile request = (RequestFile) message.getBody();
+                && message.getHeader().getType() == MessageType.SERVICE_REQ.value()
+                && message.getHeader().getAttachment() != null
+                && "ask".equals(message.getHeader().getAttachment().get("file"))) {
 
-            byte[] content = request.getContent();
-            long startPosition = request.getStartPosition();
+            log.info("接收客户端询问文件位置！");
+
+            RequestFile request = (RequestFile) message.getBody();
             String fileMd5 = request.getFileMd5();
-            String fileSectionMd5 = request.getFileSectionMd5();
             String fileName = request.getFileName();
             long fileSize = request.getFileSize();
             /**
-             * 新文件
+             * 文件位置
              */
             File file = new File(file_dir + File.separator + fileMd5 + "_"+ fileName);
             randomAccessFile = new RandomAccessFile(file, "rw");
             /**
-             * 文件已经存在 断点续传
+             * 返回客户端
              */
+            ResponseFile responseFile = new ResponseFile();
             if (file.exists()) {
-                byte[] bytes = new byte[8192];
-                randomAccessFile.seek(startPosition);
-                randomAccessFile.read(bytes);
+                boolean complete = fileSize == randomAccessFile.length() && fileMd5.equals(MD5FileUtil.getMD5String(file));
                 /**
-                 * 已经存在的MD5值 片段
+                 * 已经传输完毕
                  */
-                String md5String = MD5FileUtil.getMD5String(bytes);
+                if (complete) {
+                    responseFile.setComplete(true);
+                }
                 /**
-                 * 如果不一致覆盖
+                 * 需要断点续传
                  */
-                if (!fileSectionMd5.equals(md5String)) {
-                    randomAccessFile.seek(startPosition);
-                    randomAccessFile.write(content);
+                else {
+                    responseFile.setComplete(false);
+                    responseFile.setEndPosition(randomAccessFile.length());
                 }
             }
             /**
-             * 新传入的文件
+             * 新文件
              */
             else {
-                randomAccessFile.seek(startPosition);
-                randomAccessFile.write(content);
+                responseFile.setComplete(false);
+                responseFile.setEndPosition((long) 0);
             }
-            /**
-             *  应答客户端
-             */
+
+            ctx.writeAndFlush(
+                    NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_RESP.value(),
+                            Collections.singletonMap("file","transfer"),
+                            responseFile));
+        }
+        /**
+         * 传输数据包
+         */
+        else if (message.getHeader() != null
+                && message.getHeader().getType() == MessageType.SERVICE_REQ.value()
+                && message.getHeader().getAttachment() != null
+                && "transfer".equals(message.getHeader().getAttachment().get("file"))){
+
+            log.info("开始写入文件！");
+
+            RequestFile request = (RequestFile) message.getBody();
+            long fileSize = request.getFileSize();
+            String fileMd5 = request.getFileMd5();
+            String fileName = request.getFileName();
+
+            randomAccessFile.seek(request.getStartPosition());
+            randomAccessFile.write(request.getContent());
+
+            File file = new File(file_dir + File.separator + fileMd5 + "_"+ fileName);
+
             ResponseFile responseFile = new ResponseFile();
-            /**
-             * 先比较长度,每次比较MD5,需重新计算，太慢
-             */
-            responseFile.setComplete(fileSize == randomAccessFile.length() && fileMd5.equals(MD5FileUtil.getMD5String(file)));
-            responseFile.setFileName(fileName);
-            responseFile.setProgress(math(randomAccessFile.length(), fileSize));
-            ctx.writeAndFlush(NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_RESP.value(), responseFile));
+
+            if (fileSize == randomAccessFile.length() && fileMd5.equals(MD5FileUtil.getMD5String(file))) {
+                responseFile.setComplete(true);
+                responseFile.setProgress(math(randomAccessFile.length(), fileSize));
+            } else {
+                responseFile.setComplete(false);
+                responseFile.setEndPosition(randomAccessFile.getFilePointer());
+                responseFile.setProgress(math(randomAccessFile.length(), fileSize));
+            }
+            ctx.writeAndFlush(
+                    NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_RESP.value(),
+                            Collections.singletonMap("file","transfer"),
+                            responseFile));
+
         }
     }
 

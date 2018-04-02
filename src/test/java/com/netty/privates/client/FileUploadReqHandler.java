@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Collection;
@@ -40,70 +41,43 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
     protected void messageReceived(ChannelHandlerContext ctx, NettyMessage message) throws Exception {
         /**
          * 握手成功
-         * 开始传输文件
+         * 验证文件
          */
         if (message.getHeader() != null
                 && message.getHeader().getType() == MessageType.LOGIN_RESP.value()) {
 
-            log.info("服务端已回复心跳，准备发送文件 ：" + new Date().toString());
+            log.info("询问文件是否在服务器存在！");
 
             /**
-             * 指定大小的数组
+             * 询问服务器是否有文件，或文件需要 断点续传
              */
-            byte[] bytes = new byte[8192];
-
-            randomAccessFile = new RandomAccessFile(request.getFile(), "r");
-
-            int readByteSize = 0;
-            while ((readByteSize = randomAccessFile.read(bytes)) != -1) {
-                /**
-                 * 避免由于数组长度过长导致
-                 * 上传的服务端文件比本地的
-                 * 文件大
-                 */
-                if (readByteSize < 8192) {
-                    bytes = new byte[readByteSize];
-                    randomAccessFile.read(bytes);
-                }
-                /**
-                 * 传输对象
-                 */
-                request.setContent(bytes);
-                request.setFileSize(randomAccessFile.length());
-                request.setFileSectionMd5(MD5FileUtil.getMD5String(bytes));
-                /**
-                 * 对象属性
-                 */
-                NettyMessage nettyMessage = NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_REQ.value());
-                nettyMessage.setBody(request);
-
-                ctx.writeAndFlush(nettyMessage);
-                /**
-                 * 设定循环属性
-                 */
-                request.setStartPosition(request.getStartPosition() + readByteSize);
-                randomAccessFile.seek(request.getStartPosition());
-            }
-            if (readByteSize == -1) {
-                randomAccessFile.close();
-            }
+            ctx.writeAndFlush(
+                    NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_REQ.value(),
+                            Collections.singletonMap("file", "ask"),
+                            request));
         }
         /**
-         * 接到服务器传输回调
+         * 开始读取数据包
          */
         else if (message.getHeader() != null
-                && message.getHeader().getType() == MessageType.SERVICE_RESP.value()) {
-            ResponseFile responseFile = (ResponseFile) message.getBody();
+                && message.getHeader().getType() == MessageType.SERVICE_RESP.value()
+                && message.getHeader().getAttachment() != null
+                && "transfer".equals(message.getHeader().getAttachment().get("file"))) {
 
-            if (responseFile.isComplete()) {
-                log.info("传输完成，关闭连接！");
-                ctx.close();
-            }
+            ResponseFile responseFile = (ResponseFile) message.getBody();
+            boolean complete = responseFile.isComplete();
+
             /**
-             * 完成百分比
+             * 文件已经存在
              */
-            String progress = responseFile.getProgress();
-            log.info("progress :" + progress);
+            if (complete) {
+                log.info("文件已经存在服务器！");
+                ctx.close();
+            } else {
+                request.setStartPosition(responseFile.getEndPosition());
+                log.info("百分比：" + responseFile.getProgress());
+                read0(ctx);
+            }
         }
     }
 
@@ -118,5 +92,36 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
             }
         }
         ctx.close();
+    }
+
+    private void read0(ChannelHandlerContext ctx) throws IOException {
+        byte[] bytes = new byte[8192];
+
+        randomAccessFile = new RandomAccessFile(request.getFile(), "r");
+        randomAccessFile.seek(request.getStartPosition());
+
+        int readByteSize = 0;
+        if ((readByteSize = randomAccessFile.read(bytes)) != -1 && (randomAccessFile.length() - request.getStartPosition()) > 0) {
+            if (readByteSize < 8192) {
+                bytes = new byte[readByteSize];
+                randomAccessFile.read(bytes);
+            }
+            /**
+             * 传输对象
+             */
+            request.setContent(bytes);
+            request.setFileSize(randomAccessFile.length());
+
+            /**
+             * 传输到服务器
+             */
+            ctx.writeAndFlush(
+                    NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_REQ.value(),
+                            Collections.singletonMap("file", "transfer"),
+                            request));
+        } else {
+            randomAccessFile.close();
+            ctx.close();
+        }
     }
 }

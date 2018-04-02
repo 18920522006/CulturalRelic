@@ -1,8 +1,8 @@
 package com.netty.privates.server;
 
 import com.netty.privates.NettyConstant;
-import com.netty.privates.codec.decode.NettyMessageDecoder;
-import com.netty.privates.codec.encode.NettyMessageEncoder;
+import com.netty.privates.codec.marshalling.decode.NettyMessageDecoder;
+import com.netty.privates.codec.marshalling.encode.NettyMessageEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -13,8 +13,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-
-import java.net.InetSocketAddress;
 
 /**
  * @author wangchen
