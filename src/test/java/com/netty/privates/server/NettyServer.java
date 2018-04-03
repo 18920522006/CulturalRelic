@@ -14,17 +14,20 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * @author wangchen
  * @date 2018/3/22 10:07
  */
 public class NettyServer {
-    
-    public static void main(String[] args) throws Exception {
-        new NettyServer().run();
+
+    public void run(int port) throws Exception {
+        this.run(InetAddress.getLocalHost().getHostAddress(), port);
     }
-    
-    public void run() throws Exception {
+
+    public void run(String host, int port) throws Exception {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         try {
@@ -66,9 +69,7 @@ public class NettyServer {
                                     .addLast("fileTransfer", new FileUploadRepsHandler());
                         }
                     });
-            ChannelFuture future = b.bind(NettyConstant.REMOTE_IP, NettyConstant.LOCAL_PORT).sync();
-            System.out.println("-----------------------------------------------------------------");
-            System.out.println("启动服务器 ：" + "127.0.0.1:12088");
+            ChannelFuture future = b.bind(host, port).sync();
             future.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
