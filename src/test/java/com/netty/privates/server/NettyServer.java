@@ -23,13 +23,7 @@ import java.net.UnknownHostException;
  */
 public class NettyServer {
 
-    public void run(int port) throws Exception {
-        this.run(InetAddress.getLocalHost().getHostAddress(), port);
-    }
-
-    public void run(String host, int port) throws Exception {
-        NioEventLoopGroup bossGroup = new NioEventLoopGroup();
-        NioEventLoopGroup workGroup = new NioEventLoopGroup();
+    public void run(String host, int port, NioEventLoopGroup bossGroup, NioEventLoopGroup workGroup) throws Exception {
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workGroup)
