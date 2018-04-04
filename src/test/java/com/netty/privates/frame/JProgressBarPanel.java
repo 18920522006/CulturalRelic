@@ -207,7 +207,6 @@ public class JProgressBarPanel extends JFrame {
         } else if (Integer.parseInt(progress) == 100 ) {
             progressBar.setString("已完成!");
         } else {
-            log.info("进度 ： " + progress);
             progressBar.setValue(Integer.parseInt(progress));
         }
     }
