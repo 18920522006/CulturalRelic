@@ -5,8 +5,10 @@ import com.netty.privates.client.FileUploadReqHandler;
 import com.netty.privates.client.NettyClient;
 import com.netty.privates.server.NettyServer;
 import io.netty.channel.nio.NioEventLoopGroup;
+import org.codehaus.groovy.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -133,7 +135,11 @@ public class JProgressBarPanel extends JFrame {
                  * 上传按钮
                  */
                 JButton developer = new JButton("上传文件");
-                panel.add(new JLabel("点击上传按钮上传文件！"));
+                JTextField field = new JTextField("输入远程连接");
+                field.setSize(220, 20);
+                field.setFont(new Font("宋体",Font.BOLD,20));
+
+                panel.add(field);
                 panel.add(developer);
 
                 developer.addActionListener(new AbstractAction() {
@@ -160,7 +166,7 @@ public class JProgressBarPanel extends JFrame {
                                         workGroup = new NioEventLoopGroup();
                                         try {
                                             new NettyClient().connect(
-                                                    NettyConstant.REMOTE_IP,
+                                                    StringUtils.isEmpty(field.getText()) ? NettyConstant.REMOTE_IP : field.getText(),
                                                     NettyConstant.LOCAL_PORT,
                                                     files,
                                                     workGroup,
