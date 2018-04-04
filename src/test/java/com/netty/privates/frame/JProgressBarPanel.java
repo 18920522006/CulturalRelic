@@ -1,11 +1,9 @@
 package com.netty.privates.frame;
 
 import com.netty.privates.NettyConstant;
-import com.netty.privates.client.FileUploadReqHandler;
 import com.netty.privates.client.NettyClient;
 import com.netty.privates.server.NettyServer;
 import io.netty.channel.nio.NioEventLoopGroup;
-import org.codehaus.groovy.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
