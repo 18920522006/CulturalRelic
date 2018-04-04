@@ -195,6 +195,9 @@ public class JProgressBarPanel extends JFrame {
             frame.add(progressBar);
             frame.add(new JLabel(file.getName()));
 
+            frame.invalidate();
+            frame.repaint();
+            frame.setVisible(true);
         } else {
             progressBar = progressBars.get(file.getPath());
         }
