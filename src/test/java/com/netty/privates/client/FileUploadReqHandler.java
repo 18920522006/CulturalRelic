@@ -89,9 +89,6 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
             } else {
                 RequestFile requestFile = responseFile.getRequestFile();
                 requestFile.setStartPosition(responseFile.getEndPosition());
-                /**
-                 * 绘制百分比
-                 */
                 panel.progress(panel, requestFile.getFile(), responseFile.getProgress());
                 read0(ctx, requestFile);
             }
