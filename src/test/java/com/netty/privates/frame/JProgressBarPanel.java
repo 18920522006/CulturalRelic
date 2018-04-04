@@ -125,11 +125,16 @@ public class JProgressBarPanel extends JFrame {
                 accept.setVisible(false);
                 transfer.setVisible(false);
 
+                Container contentPane = frame.getContentPane();
+                JPanel panel = new JPanel();
+
+                contentPane.add(panel);
                 /**
                  * 上传按钮
                  */
                 JButton developer = new JButton("上传文件");
-                frame.add(developer);
+                panel.add(new JLabel("点击上传按钮上传文件！"));
+                panel.add(developer);
 
                 developer.addActionListener(new AbstractAction() {
                     @Override
@@ -146,6 +151,9 @@ public class JProgressBarPanel extends JFrame {
                         if (chooser.showOpenDialog(developer) == JFileChooser.APPROVE_OPTION) {
                             File[] files = chooser.getSelectedFiles();
                             if (files != null && files.length > 0) {
+
+                                panel.setLayout(new GridLayout(files.length + 1, 2,20,10));
+
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -192,8 +200,12 @@ public class JProgressBarPanel extends JFrame {
             progressBar.setStringPainted(true);
             progressBars.put(file.getPath(), progressBar);
 
-            frame.add(progressBar);
-            frame.add(new JLabel(file.getName()));
+            Component[] components = frame.getContentPane().getComponents();
+
+            JPanel jPanels = (JPanel) components[2];
+
+            jPanels.add(progressBar);
+            jPanels.add(new JLabel(file.getName()));
 
             frame.invalidate();
             frame.repaint();
