@@ -73,6 +73,7 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
                  */
                 if (complete) {
                     responseFile.setComplete(true);
+                    responseFile.setRequestFile(request);
                 }
                 /**
                  * 需要断点续传
