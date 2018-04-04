@@ -86,6 +86,9 @@ public class FileUploadReqHandler extends SimpleChannelInboundHandler<NettyMessa
                     accessFile.close();
                     this.randomAccessFiles.remove(path);
                 }
+                if (this.randomAccessFiles.size() == 0) {
+                    ctx.close();
+                }
             } else {
                 RequestFile requestFile = responseFile.getRequestFile();
                 requestFile.setStartPosition(responseFile.getEndPosition());
