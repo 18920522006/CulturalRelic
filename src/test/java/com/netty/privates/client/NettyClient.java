@@ -3,6 +3,7 @@ package com.netty.privates.client;
 import com.netty.privates.NettyConstant;
 import com.netty.privates.codec.marshalling.decode.NettyMessageDecoder;
 import com.netty.privates.codec.marshalling.encode.NettyMessageEncoder;
+import com.netty.privates.frame.JProgressBarPanel;
 import com.netty.privates.util.ObjectConvertUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -16,10 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author wangchen
@@ -27,53 +26,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class NettyClient {
 
-    public static void main(String[] args) throws Exception {
-        NettyClient nettyClient = new NettyClient();
-        nettyClient.setHost(NettyConstant.REMOTE_IP);
-        nettyClient.setPort(NettyConstant.LOCAL_PORT);
-        nettyClient.setFile(new File("C:\\Users\\wangchen\\Downloads\\cs1_6_Setup.exe"));
-        nettyClient.connect();
-    }
-
     private static final Logger log = LoggerFactory.getLogger(NettyClient.class);
 
     private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-    private int port;
-
-    private String host;
-
-    private File file;
-
-    public int getPort() {
-        return port;
+    public void connect(File file) throws Exception {
+        this.connect(NettyConstant.LOCAL_IP, NettyConstant.LOCAL_PORT, new File[]{file}, new NioEventLoopGroup(), new JProgressBarPanel());
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-
-    public void connect() throws Exception {
+    public void connect(String host, int port, File[] files, NioEventLoopGroup workGroup, JProgressBarPanel panel) throws Exception {
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
-            b.group(bossGroup)
+            b.group(workGroup)
                     .channel(NioSocketChannel.class)
                     /**
                      * TCP/IP协议中针对TCP默认开启了Nagle算法。Nagle算法通过减少需要传输的数据包，来优化网络。
@@ -98,7 +63,7 @@ public class NettyClient {
                                     /**
                                      * 50秒内没有读取到对方任何信息，需要主动关闭链路
                                      */
-                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(10))
+                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(50))
                                     /**
                                      * 握手
                                      */
@@ -110,7 +75,7 @@ public class NettyClient {
                                     /**
                                      * 传输文件
                                      */
-                                    .addLast("fileHandler", new FileUploadReqHandler(ObjectConvertUtil.convert(file)));
+                                    .addLast("fileHandler", new FileUploadReqHandler(ObjectConvertUtil.convert(files), panel));
                         }
                     });
             ChannelFuture future = b.connect(host,port).sync();
@@ -119,20 +84,20 @@ public class NettyClient {
             /**
              * 释放资源后，清空资源，再次发起重连操作
              */
-            executor.execute(new Runnable() {
+            /*executor.execute(new Runnable() {
                 @Override
                 public void run() {
 
                     log.info("链路连接中断，开始重新连接！" + new Date().toString());
 
                     try {
-                        /**
+                        *//**
                          * 每5秒钟重连一次
-                         */
+                         *//*
                         TimeUnit.SECONDS.sleep(5);
-                        /**
+                        *//**
                          * 更换地址
-                         */
+                         *//*
                         connect();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -140,7 +105,7 @@ public class NettyClient {
                         e.printStackTrace();
                     }
                 }
-            });
+            });*/
         }
     }
 

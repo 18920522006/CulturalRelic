@@ -12,10 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.NumberFormat;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author wangchen
@@ -29,10 +33,12 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
      * 文件默认存储地址, 用户当前目录
      */
     private String file_dir = System.getProperty("user.dir");
-    /**
-     *
-     */
-    private RandomAccessFile randomAccessFile;
+
+    private Map<String, RandomAccessFile> randomAccessFiles;
+
+    public FileUploadRepsHandler() {
+        this.randomAccessFiles = new ConcurrentHashMap<>();
+    }
 
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, NettyMessage message) throws Exception {
@@ -55,7 +61,7 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
              * 文件位置
              */
             File file = new File(file_dir + File.separator + fileMd5 + "_"+ fileName);
-            randomAccessFile = new RandomAccessFile(file, "rw");
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
             /**
              * 返回客户端
              */
@@ -73,6 +79,7 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
                  */
                 else {
                     responseFile.setComplete(false);
+                    responseFile.setRequestFile(request);
                     responseFile.setEndPosition(randomAccessFile.length());
                 }
             }
@@ -81,6 +88,7 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
              */
             else {
                 responseFile.setComplete(false);
+                responseFile.setRequestFile(request);
                 responseFile.setEndPosition((long) 0);
             }
 
@@ -88,6 +96,8 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
                     NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_RESP.value(),
                             Collections.singletonMap("file","transfer"),
                             responseFile));
+
+            randomAccessFile.close();
         }
         /**
          * 传输数据包
@@ -97,27 +107,30 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
                 && message.getHeader().getAttachment() != null
                 && "transfer".equals(message.getHeader().getAttachment().get("file"))){
 
-            log.info("开始写入文件！");
-
             RequestFile request = (RequestFile) message.getBody();
+
             long fileSize = request.getFileSize();
             String fileMd5 = request.getFileMd5();
             String fileName = request.getFileName();
 
+            File file = new File(file_dir + File.separator + fileMd5 + "_"+ fileName);
+
+            RandomAccessFile randomAccessFile = getAccessFile(file.getPath(), file);
+
             randomAccessFile.seek(request.getStartPosition());
             randomAccessFile.write(request.getContent());
-
-            File file = new File(file_dir + File.separator + fileMd5 + "_"+ fileName);
 
             ResponseFile responseFile = new ResponseFile();
 
             if (fileSize == randomAccessFile.length() && fileMd5.equals(MD5FileUtil.getMD5String(file))) {
                 responseFile.setComplete(true);
+                responseFile.setRequestFile(request);
                 responseFile.setProgress(math(randomAccessFile.length(), fileSize));
                 randomAccessFile.close();
-                randomAccessFile = null;
+                this.randomAccessFiles.remove(file.getPath());
             } else {
                 responseFile.setComplete(false);
+                responseFile.setRequestFile(request);
                 responseFile.setEndPosition(randomAccessFile.getFilePointer());
                 responseFile.setProgress(math(randomAccessFile.length(), fileSize));
             }
@@ -125,18 +138,18 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
                     NettyMessageUtil.buildNettyMessage(MessageType.SERVICE_RESP.value(),
                             Collections.singletonMap("file","transfer"),
                             responseFile));
-
         }
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws IOException {
         cause.printStackTrace();
-        if(randomAccessFile != null){
-            try {
-                randomAccessFile.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (this.randomAccessFiles.size() > 0) {
+            for (Iterator<RandomAccessFile> it = this.randomAccessFiles.values().iterator(); it.hasNext();) {
+                RandomAccessFile next = it.next();
+                if (next != null) {
+                    next.close();
+                }
             }
         }
         ctx.close();
@@ -148,7 +161,18 @@ public class FileUploadRepsHandler extends SimpleChannelInboundHandler<NettyMess
     private static String math(long divisor1, long divisor2) {
         double percent = Double.parseDouble(String.valueOf(divisor1))/ Double.parseDouble(String.valueOf(divisor2));
         NumberFormat nt = NumberFormat.getPercentInstance();
-        nt.setMinimumFractionDigits(5);
-        return nt.format(percent);
+        nt.setMinimumFractionDigits(0);
+        String format = nt.format(percent);
+        return format.substring(0, format.indexOf("%"));
+    }
+
+    private RandomAccessFile getAccessFile(String fileName, File file) throws FileNotFoundException {
+        if (this.randomAccessFiles.containsKey(fileName)) {
+            return this.randomAccessFiles.get(fileName);
+        } else {
+            RandomAccessFile accessFile = new RandomAccessFile(file, "rw");
+            this.randomAccessFiles.put(fileName, accessFile);
+            return accessFile;
+        }
     }
 }

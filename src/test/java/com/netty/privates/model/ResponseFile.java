@@ -20,6 +20,11 @@ public class ResponseFile implements Serializable {
      */
     private Long endPosition;
 
+    /**
+     * 。。。
+     */
+    RequestFile requestFile;
+
     public boolean isComplete() {
         return complete;
     }
@@ -42,5 +47,13 @@ public class ResponseFile implements Serializable {
 
     public void setEndPosition(Long endPosition) {
         this.endPosition = endPosition;
+    }
+
+    public RequestFile getRequestFile() {
+        return requestFile;
+    }
+
+    public void setRequestFile(RequestFile requestFile) {
+        this.requestFile = requestFile;
     }
 }

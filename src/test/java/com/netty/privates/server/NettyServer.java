@@ -23,6 +23,10 @@ import java.net.UnknownHostException;
  */
 public class NettyServer {
 
+    public void run() throws Exception {
+        this.run(NettyConstant.REMOTE_IP, NettyConstant.LOCAL_PORT, new NioEventLoopGroup(), new NioEventLoopGroup());
+    }
+
     public void run(String host, int port, NioEventLoopGroup bossGroup, NioEventLoopGroup workGroup) throws Exception {
         try {
             ServerBootstrap b = new ServerBootstrap();
@@ -48,7 +52,7 @@ public class NettyServer {
                                     /**
                                      * 50秒内没有读取到对方任何信息，需要主动关闭链路
                                      */
-                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(10))
+                                    .addLast("readTimeoutHandler", new ReadTimeoutHandler(50))
                                     /**
                                      * 握手
                                      */
